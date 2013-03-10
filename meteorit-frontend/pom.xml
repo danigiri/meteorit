@@ -1,0 +1,96 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.calidos.dani.meteorit</groupId>
+	<artifactId>meteorit-frontend</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>rpm</packaging>
+
+	<name>Meteorit system github release pom</name>
+	<description> XXXX
+	</description>
+    <inceptionYear>2013</inceptionYear>
+    <url>http://dani.calidos.com</url>
+    
+    <properties>
+    	<nginx.filename_>nginx-1.2.3</nginx.filename_>
+    	<nginx.url_>http://nginx.org/download/${nginx.filename_}.tar.gz</nginx.url_>
+    	<redis2-nginx-module.name_>redis2-nginx-module</redis2-nginx-module.name_>
+    	<redis2-nginx-module.url_>https://github.com/agentzh/redis2-nginx-module/archive/v0.09.tar.gz</redis2-nginx-module.url_>
+    </properties>
+    
+    <build>
+    
+    	<plugins>
+        
+            <!-- Download whatever is needed -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <target>
+                                <get src="${nginx.url_}" 
+                                dest="${project.build.directory}/" skipexisting="true" />
+                                <get src="redis2-nginx-module.url_" 
+                                dest="${project.build.directory}/${redis2-nginx-module.name_}.tar.gz" skipexisting="true" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+	    
+	  		<!-- package as rpm -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <version>2.0.1</version>
+                <extensions>true</extensions>
+
+                <configuration>
+                    <packager>${team.name}</packager>
+                    <distribution>jithome</distribution>
+                    <group>JIT/Tools</group>    <!-- classificacio de l'instalable -->
+
+                    <!-- venen definits pel projecte -->
+                    <copyright>${project.inceptionYear}, ${project.organization.name}</copyright>
+                    <summary>${project.name}</summary>
+                    <description>${project.description}</description>
+                    <url>${project.url}</url>
+
+	    			<icon />
+
+                    <requires>
+                    </requires>
+
+                    <defineStatements>
+                        <defineStatement>_unpackaged_files_terminate_build 0</defineStatement>
+                        <defineStatement>_name ${project.artifactId}</defineStatement>
+                        <defineStatement>_app ${project.artifactId}</defineStatement>
+                    </defineStatements>
+
+                    <defaultDirmode>755</defaultDirmode>
+                    <defaultFilemode>644</defaultFilemode>  <!-- rw_r__r__ -->
+                    <defaultUsername>root</defaultUsername>
+                    <defaultGroupname>root</defaultGroupname>
+			    </configuration>
+		   </plugin>
+	    </plugins>
+	    
+    </build>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<comments>Copyright 2013 Daniel Giribet</comments>
+		</license>
+	</licenses>
+	
+	
+</project>
+	

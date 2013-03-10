@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.calidos.dani</groupId>
+	<artifactId>meteorit</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>Meteorit system github release pom</name>
+	<description> XXXX
+	</description>
+	<inceptionYear>2013</inceptionYear>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<comments>Copyright 2013 Daniel Giribet</comments>
+		</license>
+	</licenses>
+
+	<properties>
+		<developer.id_>danigiri</developer.id_>
+		<scm.host_>github.com</scm.host_>
+		<github.global.server>github.com-upload</github.global.server>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<developers>
+		<developer>
+			<id>${developer.id_}</id>
+			<name>Daniel Giribet</name>
+			<email>dani AT calidos DOT cat</email>
+			<url>http//dani.calidos.com</url>
+			<roles>
+				<role>creator</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@${scm.host_}:${developer.id_}/${project.artifactId}.git</connection>
+		<url>scm:git:git@${scm.host_}:${developer.id_}/${project.artifactId}.git</url>
+		<developerConnection>scm:git:git@${scm.host_}:${developer.id_}/${project.artifactId}.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<build>
+		<plugins>
+			<!-- release management -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<goals>deploy</goals>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
