@@ -3,7 +3,7 @@
 	<groupId>com.calidos.dani.meteorit</groupId>
 	<artifactId>meteorit-frontend</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<packaging>rpm</packaging>
+	<packaging>pom</packaging>
 
 	<name>Meteorit system frontend generator</name>
 	<description>Downloads nginx and the relevant modules and compiles it onto a specific package
@@ -165,25 +165,159 @@
  	                        <username>root</username>
                             <groupname>root</groupname>  
                             <filemode>755</filemode>                  		
-                       		<directory>/etc/init.d</directory>                 		
+                       		<directory>/etc/init.d</directory>        		
                        		<directoryIncluded>false</directoryIncluded>
                     	</mapping>
                     	
                     	<!-- Lua JIT mappings -->
-                    	<mapping>	
+						<mapping>
+							<username>root</username>
+							<groupname>root</groupname>
+							<filemode>755</filemode>
+							<directory>${lua.installfolder_}</directory>
+						</mapping>
+							
+						<mapping>		<!-- BIN -->
+							<username>root</username>
+							<groupname>root</groupname>
+							<filemode>755</filemode>
+							<directory>${lua.installfolder_}/bin</directory>
+						</mapping>
+                        <mapping>	
                     		<sources>
                     			<source>
-                    				<location>${lua.tempfolder2_}</location>
+                    				<location>${lua.tempfolder_}/${lua.installfolder_}/bin</location>
+                    				<excludes>
+                    					<exclude>luajit</exclude>
+                    				</excludes>
                     			</source>
+                    			<softlinkSource>
+                    				<destination>luajit</destination>
+                    				<location>luajit-2.0.1</location>
+                    			</softlinkSource>
                     		</sources>
  	                        <username>root</username>
                             <groupname>root</groupname>  
                             <filemode>755</filemode>
-                       		<directory>${lua.installfolder_}</directory>                 		
-                       		<recurseDirectories>false</recurseDirectories>
-                    	</mapping>
+                       		<directory>${lua.installfolder_}/bin</directory>
+                       		<directoryIncluded>false</directoryIncluded>
+                    	</mapping>        
                     	
+                    	<mapping>		<!-- INCLUDE -->
+							<username>root</username>
+							<groupname>root</groupname>
+							<filemode>755</filemode>
+							<directory>${lua.installfolder_}/include</directory>
+						</mapping>
+                    	<mapping>
+							<username>root</username>
+							<groupname>root</groupname>
+							<filemode>755</filemode>
+							<directory>${lua.installfolder_}/include/luajit-2.0</directory>
+						</mapping>
+                        <mapping>	
+                    		<sources>
+                    			<source>
+                    				<location>${lua.tempfolder_}/${lua.installfolder_}/include/luajit-2.0</location>
+                    			</source>
+                    		</sources>
+ 	                        <username>root</username>
+                            <groupname>root</groupname>  
+                            <filemode>644</filemode>
+                       		<directory>${lua.installfolder_}/include/luajit-2.0</directory>
+                       		<directoryIncluded>false</directoryIncluded>
+                    	</mapping>        
                     	
+                    	<mapping>		<!-- LIB -->
+							<username>root</username>
+							<groupname>root</groupname>
+							<filemode>755</filemode>
+							<directory>${lua.installfolder_}/lib</directory>
+						</mapping>
+						<mapping>	
+                    		<sources>
+                    			<source>
+                    				<location>${lua.tempfolder_}/${lua.installfolder_}/lib/libluajit-5.1.so.2.0.1</location>
+                    			</source>
+                    			<softlinkSource>
+                    				<destination>libluajit-5.1.so</destination>
+                    				<location>libluajit-5.1.so.2.0.1</location>
+                    			</softlinkSource>
+                    			<softlinkSource>
+                    				<destination>libluajit-5.1.so.2</destination>
+                    				<location>libluajit-5.1.so.2.0.1</location>
+                    			</softlinkSource>
+                    		</sources>
+ 	                        <username>root</username>
+                            <groupname>root</groupname>  
+                            <filemode>755</filemode>
+                       		<directory>${lua.installfolder_}/lib</directory>
+                       		<directoryIncluded>false</directoryIncluded>
+                       	</mapping>
+                       	<mapping>	
+                    		<sources>
+                    			<source>
+                    				<location>${lua.tempfolder_}/${lua.installfolder_}/lib/libluajit-5.1.a</location>
+                    			</source>
+                    		</sources>
+ 	                        <username>root</username>
+                            <groupname>root</groupname>  
+                            <filemode>644</filemode>
+                       		<directory>${lua.installfolder_}/lib</directory>
+                       		<directoryIncluded>false</directoryIncluded>
+                       	</mapping>
+                       	
+                    	<mapping>		<!-- LIB/LUA -->
+							<username>root</username>
+							<groupname>root</groupname>
+							<filemode>755</filemode>
+							<directory>${lua.installfolder_}/lib/lua</directory>
+						</mapping>
+                    	<mapping>		<!-- LIB/LUA -->
+							<username>root</username>
+							<groupname>root</groupname>
+							<filemode>755</filemode>
+							<directory>${lua.installfolder_}/lib/lua/5.1</directory>
+						</mapping>
+                    	<mapping>		<!-- LIB/PKGCONFIG -->
+							<username>root</username>
+							<groupname>root</groupname>
+							<filemode>755</filemode>
+							<directory>${lua.installfolder_}/lib/pkgconfig</directory>
+						</mapping>
+                       	<mapping>	
+                    		<sources>
+                    			<source>
+                    				<location>${lua.tempfolder_}/${lua.installfolder_}/lib/pkgconfig/luajit.pc</location>
+                    			</source>
+                    		</sources>
+ 	                        <username>root</username>
+                            <groupname>root</groupname>  
+                            <filemode>644</filemode>
+                       		<directory>${lua.installfolder_}/lib/pkgconfig</directory>
+                       		<directoryIncluded>false</directoryIncluded>
+                       	</mapping>
+                       	
+						<mapping>		<!-- SHARE -->
+							<username>root</username>
+							<groupname>root</groupname>
+							<filemode>755</filemode>
+							<directory>${lua.installfolder_}/share</directory>
+						</mapping>
+						<mapping>		
+							<username>root</username>
+							<groupname>root</groupname>
+							<filemode>755</filemode>
+							<directory>${lua.installfolder_}/share/lua</directory>
+						</mapping>
+						<mapping>		
+							<username>root</username>
+							<groupname>root</groupname>
+							<filemode>755</filemode>
+							<directory>${lua.installfolder_}/share/lua/5.1</directory>
+						</mapping>
+
+
                     </mappings>
 
 					<preinstallScriptlet>

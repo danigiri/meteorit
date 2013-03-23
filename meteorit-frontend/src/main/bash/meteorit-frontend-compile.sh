@@ -2,21 +2,23 @@
 
 echo 'Starting lua build...'
 
-cd '${project.build.directory}/${lua.name_}'
-echo 'Compiling:'
-make PREFIX=${lua.installfolder_} | pv -l -f -p -s 6 > ./make.output
-echo 'Installing:'
-make install PREFIX=${lua.tempfolder_} | pv -l -f -p -s 18 >> ./make.output
-cd ${lua.tempfolder_}
-find . -type d -exec mkdir -vp ${lua.tempfolder2_}/'{}' \; 
-
-echo 'Starting nginx build...'
-
 cd '${nginx.sourcefolder_}'
 if [ -e objs/nginx ]; then
 	echo 'Already compiled, skipping'
 	exit 0
 fi
+cd '${project.build.directory}/${lua.name_}'
+echo 'Compiling:'
+make amalg PREFIX=${lua.installfolder_} | pv -l -f -p -s 15 > ./make.output
+
+# the make install script uses a prefix DESTDIR environment variable which we use to create a complete temp install
+echo 'Installing:'
+make install PREFIX=${lua.installfolder_} DESTDIR=${lua.tempfolder_} | pv -l -f -p -s 18 >> ./make.output
+cd ${lua.tempfolder_}
+#find . -type d -exec mkdir -p ${lua.tempfolder2_}/'{}' \; 
+
+echo 'Starting nginx build...'
+
 
 echo 'Configuring:'
 ./configure --prefix='${nginx.installfolder_}' \
