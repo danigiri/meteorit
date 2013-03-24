@@ -1,0 +1,295 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.calidos.dani.meteorit</groupId>
+	<artifactId>meteorit-frontend-lua</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>rpm</packaging>
+
+	<name>Meteorit system frontend lua component</name>
+	<description>Downloads lua JIT and compiles it onto a RPM
+	</description>
+    <inceptionYear>2013</inceptionYear>
+    <url>http://dani.calidos.com</url>
+    
+    <parent>
+    	<groupId>com.calidos.dani.meteorit</groupId>
+		<artifactId>meteorit-compile-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+    </parent>
+    
+    <properties>
+   		<lua.name_>LuaJIT-2.0.1</lua.name_>
+		<lua.url_>http://luajit.org/download/${lua.name_}.tar.gz</lua.url_>
+		<lua-patch.name_>v2.0.1_hotfix1.patch</lua-patch.name_>
+		<lua-patch.url_>http://luajit.org/download/${lua-patch.name_}</lua-patch.url_>
+		<lua.installfolder_>${install.prefix_}/lj2</lua.installfolder_>
+		<lua.tempfolder_>${project.build.directory}/${lua.name_}-tmp</lua.tempfolder_>
+		<lua.tempfolder2_>${project.build.directory}/${lua.name_}-tmp2</lua.tempfolder2_>
+		<lua.username_>root</lua.username_>
+		<lua.groupname_>root</lua.groupname_>
+    </properties>
+    
+    <build>
+   		<plugins>
+
+            <plugin>	<!-- Download and expand whatever is needed -->
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <target>
+                                <get src="${lua.url_}" 
+                                dest="${project.build.directory}/${lua.name_}.tar.gz" skipexisting="true" />
+                                <untar src="${project.build.directory}/${lua.name_}.tar.gz" dest="${project.build.directory}" compression="gzip"/>
+                                <get src="${lua-patch.url_}"
+                                dest="${project.build.directory}/${lua.name_}" skipexisting="true" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+		    </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-patch-plugin</artifactId>
+				<version>1.1.1</version>
+				<configuration>
+					<backups>true</backups>
+					<strip>1</strip> <!-- remove one dir from file listing within patch -->
+					<patchFile>${project.build.directory}/${lua.name_}/${lua-patch.name_}</patchFile>
+					<targetDirectory>${project.build.directory}/${lua.name_}</targetDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>patch</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>apply</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+            <plugin>	<!-- package as rpm, yay -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <version>2.1-alpha-2</version>
+                <extensions>true</extensions>
+
+                <configuration>
+                    <packager>dani</packager>
+                    <distribution>Calidos</distribution>
+                    <group>Calidos/Meteorit</group>
+                    <copyright>See installed LICENSE file</copyright>
+                    <summary>${project.name}</summary>
+                    <description>${project.description}</description>
+                    <url>${project.url}</url>
+                    <prefix>${nginx.installfolder_}</prefix>
+                    <needarch>${binary.architecture_}</needarch>
+
+	    			<icon />
+
+                    <defineStatements>
+                        <defineStatement>_unpackaged_files_terminate_build 0</defineStatement>
+                        <defineStatement>_name ${project.artifactId}</defineStatement>
+                        <defineStatement>_app ${project.artifactId}</defineStatement>
+                    </defineStatements>
+
+                    <defaultDirmode>755</defaultDirmode>
+                    <defaultFilemode>644</defaultFilemode>
+                    <defaultUsername>${lua.username_}</defaultUsername>
+                    <defaultGroupname>${lua.groupname_}</defaultGroupname>
+                                        
+                    <mappings>
+                                        	
+                    	<!-- Lua JIT mappings -->
+						<mapping>
+							<directory>${lua.installfolder_}</directory>
+						</mapping>
+							
+						<mapping>		<!-- BIN -->
+							<directory>${lua.installfolder_}/bin</directory>
+						</mapping>
+                        <mapping>	
+                    		<sources>
+                    			<source>
+                    				<location>${lua.tempfolder_}/${lua.installfolder_}/bin</location>
+                    				<excludes>
+                    					<exclude>luajit</exclude>
+                    				</excludes>
+                    			</source>
+                    			<softlinkSource>
+                    				<destination>luajit</destination>
+                    				<location>luajit-2.0.1</location>
+                    			</softlinkSource>
+                    		</sources>
+ 	                        <username>${lua.username_}</username>
+                            <groupname>${lua.groupname_}</groupname>  
+                            <filemode>755</filemode>
+                       		<directory>${lua.installfolder_}/bin</directory>
+                       		<directoryIncluded>false</directoryIncluded>
+                    	</mapping>        
+                    	
+                    	<mapping>		<!-- INCLUDE -->
+                       		<sources>
+                    			<source>
+                    				<location>${lua.tempfolder_}/${lua.installfolder_}/include</location>
+                    			</source>
+							</sources>                    	
+							<directory>${lua.installfolder_}/include</directory>
+                       		<directoryIncluded>true</directoryIncluded>
+							<recurseDirectories>false</recurseDirectories>
+						</mapping>
+						                    	
+                    	<mapping>		<!-- LIB -->
+							<directory>${lua.installfolder_}/lib</directory>
+						</mapping>
+						<mapping>	
+                    		<sources>
+                    			<source>
+                    				<location>${lua.tempfolder_}/${lua.installfolder_}/lib/libluajit-5.1.so.2.0.1</location>
+                    			</source>
+                    			<softlinkSource>
+                    				<destination>libluajit-5.1.so</destination>
+                    				<location>libluajit-5.1.so.2.0.1</location>
+                    			</softlinkSource>
+                    			<softlinkSource>
+                    				<destination>libluajit-5.1.so.2</destination>
+                    				<location>libluajit-5.1.so.2.0.1</location>
+                    			</softlinkSource>
+                    		</sources>
+ 	                        <username>${lua.username_}</username>
+                            <groupname>${lua.groupname_}</groupname>  
+                            <filemode>755</filemode>
+                       		<directory>${lua.installfolder_}/lib</directory>
+                       		<directoryIncluded>false</directoryIncluded>
+                       	</mapping>
+                       	<mapping>	
+                    		<sources>
+                    			<source>
+                    				<location>${lua.tempfolder_}/${lua.installfolder_}/lib/libluajit-5.1.a</location>
+                    			</source>
+                    		</sources>
+                       		<directory>${lua.installfolder_}/lib</directory>
+                       		<directoryIncluded>false</directoryIncluded>
+                       	</mapping>
+                       	
+                    	<mapping>		<!-- LIB/LUA -->
+                    		<sources>
+                    			<source>
+                    				<location>${lua.tempfolder_}/${lua.installfolder_}/lib/lua</location>
+                    			</source>
+                    		</sources>
+							<directory>${lua.installfolder_}/lib/lua</directory>
+                       		<directoryIncluded>true</directoryIncluded>
+							<recurseDirectories>false</recurseDirectories>
+						</mapping>
+                       	
+						<mapping>		<!-- SHARE -->
+                    		<sources>
+                    			<source>
+                    				<location>${lua.tempfolder_}/${lua.installfolder_}/share</location>
+                    			</source>
+                    		</sources>
+							<directory>${lua.installfolder_}/share</directory>
+							<directoryIncluded>true</directoryIncluded>
+							<recurseDirectories>false</recurseDirectories>
+						</mapping>
+						<mapping>
+							<sources>
+                    			<source>
+                    				<location>${project.build.directory}/LICENSE</location>
+                    			</source>
+                    		</sources>
+							<directory>${lua.installfolder_}</directory>
+							<directoryIncluded>false</directoryIncluded>
+						</mapping>
+                    </mappings>
+
+			    </configuration>
+		   </plugin>
+    	    
+   		</plugins>
+	</build>
+	  
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<comments>Copyright (C) 2013 Daniel Giribet</comments>
+		</license>
+		<license>
+			<name>MIT open source license.</name>
+			<url>http://opensource.org/licenses/MIT</url>
+			<comments>Copyright (C) 2005-2013 Mike Pall</comments>
+		</license>
+	</licenses>	
+	    	
+	<!-- 
+	
+	==== Installing LuaJIT 2.0.1 to /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp ====
+mkdir -p /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/bin /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/lib /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/include/luajit-2.0 /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/share/man/man1 /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/lib/pkgconfig /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/share/luajit-2.0.1/jit /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/share/lua/5.1 /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/lib/lua/5.1
+cd src && install -m 0755 luajit /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/bin/luajit-2.0.1
+cd src && test -f libluajit.a && install -m 0644 libluajit.a /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/lib/libluajit-5.1.a || :
+rm -f /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/bin/luajit /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/lib/libluajit-5.1.so.2.0.1 /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/lib/libluajit-5.1.so /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/lib/libluajit-5.1.so
+cd src && test -f libluajit.so && \
+	  install -m 0755 libluajit.so /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/lib/libluajit-5.1.so.2.0.1 && \
+	  ldconfig -n /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/lib && \
+	  ln -sf libluajit-5.1.so.2.0.1 /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/lib/libluajit-5.1.so && \
+	  ln -sf libluajit-5.1.so.2.0.1 /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/lib/libluajit-5.1.so || :
+cd etc && install -m 0644 luajit.1 /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/share/man/man1
+cd etc && sed -e "s|^prefix=.*|prefix=/home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp|" luajit.pc > luajit.pc.tmp && \
+	  install -m 0644 luajit.pc.tmp /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/lib/pkgconfig/luajit.pc && \
+	  rm -f luajit.pc.tmp
+cd src && install -m 0644 lua.h lualib.h lauxlib.h luaconf.h lua.hpp luajit.h /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/include/luajit-2.0
+cd src/jit && install -m 0644 bc.lua v.lua dump.lua dis_x86.lua dis_x64.lua dis_arm.lua dis_ppc.lua dis_mips.lua dis_mipsel.lua bcsave.lua vmdef.lua /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/share/luajit-2.0.1/jit
+ln -sf luajit-2.0.1 /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp/bin/luajit
+==== Successfully installed LuaJIT 2.0.1 to /home/meteorit/meteorit/meteorit-frontend/target/LuaJIT-2.0.1-tmp ====
+
+
+├── bin
+│   ├── luajit -> luajit-2.0.1
+│   └── luajit-2.0.1
+├── include
+│   └── luajit-2.0
+│       ├── lauxlib.h
+│       ├── luaconf.h
+│       ├── lua.h
+│       ├── lua.hpp
+│       ├── luajit.h
+│       └── lualib.h
+├── lib
+│   ├── libluajit-5.1.a
+│   ├── libluajit-5.1.so -> libluajit-5.1.so.2.0.1
+│   ├── libluajit-5.1.so.2 -> libluajit-5.1.so.2.0.1
+│   ├── libluajit-5.1.so.2.0.1
+│   ├── lua
+│   │   └── 5.1
+│   └── pkgconfig
+│       └── luajit.pc
+└── share
+    ├── lua
+    │   └── 5.1
+    ├── luajit-2.0.1
+    │   └── jit
+    │       ├── bc.lua
+    │       ├── bcsave.lua
+    │       ├── dis_arm.lua
+    │       ├── dis_mipsel.lua
+    │       ├── dis_mips.lua
+    │       ├── dis_ppc.lua
+    │       ├── dis_x64.lua
+    │       ├── dis_x86.lua
+    │       ├── dump.lua
+    │       ├── v.lua
+    │       └── vmdef.lua
+    └── man
+        └── man1
+            └── luajit.1
+	
+	 -->
+
+</project>
