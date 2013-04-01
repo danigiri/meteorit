@@ -1,0 +1,18 @@
+--- nginx.conf.default	2013-04-01 21:20:13.000000000 +0200
++++ nginx.conf	2013-04-01 21:24:27.236682755 +0200
+@@ -1,5 +1,5 @@
+ 
+-#user  nobody;
++user nginx;
+ worker_processes  1;
+ 
+ #error_log  logs/error.log;
+@@ -54,6 +54,8 @@
+             root   html;
+         }
+ 
++	include meteorit.conf;
++
+         # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+         #
+         #location ~ \.php$ {

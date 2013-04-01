@@ -15,11 +15,12 @@
     	<compile.script_>./${project.artifactId}-compile.sh</compile.script_>
     	<binary.architecture_>x86_64</binary.architecture_>
     	<install.prefix_>/opt</install.prefix_>
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>    	
     </properties>
     
     <build>
-	    <resources>
-	    	<resource>	<!-- compile script -->
+	    <resources>	<!-- default resources -->
+	    	<resource>
 	    		<directory>${basedir}/src/main/bash</directory>
 	    		<targetPath>${project.build.directory}</targetPath>
 	    		<filtering>true</filtering>

@@ -34,25 +34,38 @@
     	<nginx-lua-module.url_>https://github.com/chaoslawful/lua-nginx-module/archive/v0.7.18rc2.tar.gz</nginx-lua-module.url_>
 		<nginx-lua-module.name_>lua-nginx-module-0.7.18rc2</nginx-lua-module.name_>
 		<nginx-lua-module.sourcefolder_>${project.build.directory}/${nginx-lua-module.name_}</nginx-lua-module.sourcefolder_>
+		<nginx-httpecho-module.url_>https://github.com/agentzh/echo-nginx-module/archive/v0.45.tar.gz</nginx-httpecho-module.url_>
+		<nginx-httpecho-module.name_>echo-nginx-module-0.45</nginx-httpecho-module.name_>
+		<nginx-httpecho-module.sourcefolder_>${project.build.directory}/${nginx-httpecho-module.name_}</nginx-httpecho-module.sourcefolder_>
 		<lua.installfolder_>${install.prefix_}/lj2</lua.installfolder_>
+		<skipPatch_>false</skipPatch_>	<!-- to skip reapplying patch -->
     </properties>
     
     <build>
     
     	 <resources>
+    	 	<resource>
+	    		<directory>${basedir}/src/main/bash</directory>
+	    		<targetPath>${project.build.directory}</targetPath>
+	    		<filtering>true</filtering>
+	    	</resource>
+	    	<resource>
+	    		<directory>${basedir}/src/main/resources/init.d</directory>
+	    		<targetPath>${project.build.outputDirectory}/init.d</targetPath>
+	    		<filtering>true</filtering>
+	    	</resource>
 	    	<resource>
 	    		<directory>${basedir}</directory>
 	    		<includes>
 	    			<include>LICENSE</include>
 	    		</includes>
-	    		<targetPath>${nginx.tempfolder_}</targetPath>
+	    		<targetPath>${nginx.tempfolder_}${nginx.installfolder_}</targetPath>
 	    	</resource>
-	    	<resource>	<!-- extra nginx conf, already filtered by parent m -->
-	    		<directory>${project.build.outputDirectory}/conf</directory>
-	    		<targetPath>${nginx.tempfolder_}/conf</targetPath>
+	    	<resource>
+	    		<directory>${basedir}/src/main/resources/conf</directory>
+	    		<targetPath>${nginx.tempfolder_}${nginx.installfolder_}/conf</targetPath>
 	    	</resource>
 	    </resources>
-    
     
     	<plugins>
         
@@ -81,6 +94,11 @@
                                 dest="${project.build.directory}/${nginx-lua-module.name_}.tar.gz" skipexisting="true" />
                                 <untar src="${project.build.directory}/${nginx-lua-module.name_}.tar.gz" 
                                 dest="${project.build.directory}" compression="gzip"/>
+                                <get src="${nginx-httpecho-module.url_}" 
+                                dest="${project.build.directory}/${nginx-httpecho-module.name_}.tar.gz" skipexisting="true" />
+                                <untar src="${project.build.directory}/${nginx-httpecho-module.name_}.tar.gz" 
+                                dest="${project.build.directory}" compression="gzip"/>                                
+                                
                             </target>
                         </configuration>
                         <goals>
@@ -89,29 +107,29 @@
                     </execution>
                 </executions>
 		    </plugin>
-				    
-<!--			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-patch-plugin</artifactId>
+				<version>1.1.1</version>
+				<configuration>
+					<backups>false</backups>
+					<patchFile>${basedir}/src/main/patch/nginx.conf.patch</patchFile>
+					<targetDirectory>${nginx.tempfolder_}${nginx.installfolder_}/conf/</targetDirectory>
+					<orginalFile>nginx.conf</orginalFile>
+					<skipApplication>${skipPatch_}</skipApplication>
+				</configuration>
 				<executions>
 					<execution>
-						<id>move-extra-resources-to-nginx</id>
-						<phase>prepare-package</phase>
+						<id>patch</id>
+						<phase>process-classes</phase>
 						<goals>
-							<goal>copy-resources</goal>
+							<goal>apply</goal>
 						</goals>
-						<configuration>
-							<outputDirectory>${nginx.tempfolder_}/conf</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${project.build.outputDirectory}/conf</directory>
-								</resource>
-							</resources>
-						</configuration>
 					</execution>
 				</executions>
-			</plugin> -->
-				    
+			</plugin>
+
 	  		<!-- package as rpm, yay -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -237,7 +255,14 @@
 			<url>http://wiki.nginx.org/LuaRedisParser#Copyright_.26_License</url>
 			<comments>Copyright (C) 2009, 2010, 2011, Taobao Inc., Alibaba Group ( http://www.taobao.com ).
 					  Copyright (C) 2009, 2010, 2011, by Zhang "agentzh" Yichun (章亦春) agentzh@gmail.com.</comments>
+		</license>
+		<license>
+			<name>BSD license (HttpEchoModule)</name>
+			<url>http://wiki.nginx.org/HttpEchoModule#Copyright_.26_License</url>
+			<comments>Copyright (c) 2009-2013, Yichun "agentzh" Zhang (章亦春) agentzh@gmail.com, CloudFlare Inc.</comments>
 		</license>		
+		
+		
 		
 	</licenses>	
 	
