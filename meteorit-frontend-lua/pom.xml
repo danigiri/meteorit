@@ -24,9 +24,11 @@
 		<lua-patch.url_>http://luajit.org/download/${lua-patch.name_}</lua-patch.url_>
 		<lua.installfolder_>${install.prefix_}/lj2</lua.installfolder_>
 		<lua.tempfolder_>${project.build.directory}/${lua.name_}-tmp</lua.tempfolder_>
-		<lua.tempfolder2_>${project.build.directory}/${lua.name_}-tmp2</lua.tempfolder2_>
 		<lua.username_>root</lua.username_>
 		<lua.groupname_>root</lua.groupname_>
+		<lua-redisparser.url_>https://github.com/agentzh/lua-redis-parser/archive/v0.10.tar.gz</lua-redisparser.url_>
+		<lua-redisparser.name_>lua-redis-parser-0.10</lua-redisparser.name_>
+		<lua-redisparser.sourcefolder_>${project.build.directory}/${lua-redisparser.name_}</lua-redisparser.sourcefolder_>
     </properties>
     
     <build>
@@ -45,6 +47,10 @@
                                 <untar src="${project.build.directory}/${lua.name_}.tar.gz" dest="${project.build.directory}" compression="gzip"/>
                                 <get src="${lua-patch.url_}"
                                 dest="${project.build.directory}/${lua.name_}" skipexisting="true" />
+                                <get src="${lua-redisparser.url_}" 
+                                dest="${project.build.directory}/${lua-redisparser.name_}.tar.gz" skipexisting="true" />
+                                <untar src="${project.build.directory}/${lua-redisparser.name_}.tar.gz" 
+                                dest="${project.build.directory}" compression="gzip"/>
                             </target>
                         </configuration>
                         <goals>
@@ -73,6 +79,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			
             <plugin>	<!-- package as rpm, yay -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>rpm-maven-plugin</artifactId>

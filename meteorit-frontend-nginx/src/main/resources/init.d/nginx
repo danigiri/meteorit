@@ -84,8 +84,11 @@ upgrade() {
 force_upgrade() {
     echo -n $"Upgrading $prog: "
     killproc $nginx -USR2
-    test -f "$oldpid"
-	kill -QUIT `cat "$oldpid"`
+    if [ -e "$oldpid" ]; then
+		kill -QUIT `cat "$oldpid"`
+    else
+    	restart
+    fi
     RETVAL=$?
     echo
 }

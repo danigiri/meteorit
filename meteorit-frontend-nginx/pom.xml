@@ -34,9 +34,26 @@
     	<nginx-lua-module.url_>https://github.com/chaoslawful/lua-nginx-module/archive/v0.7.18rc2.tar.gz</nginx-lua-module.url_>
 		<nginx-lua-module.name_>lua-nginx-module-0.7.18rc2</nginx-lua-module.name_>
 		<nginx-lua-module.sourcefolder_>${project.build.directory}/${nginx-lua-module.name_}</nginx-lua-module.sourcefolder_>
+		<lua.installfolder_>${install.prefix_}/lj2</lua.installfolder_>
     </properties>
     
     <build>
+    
+    	 <resources>
+	    	<resource>
+	    		<directory>${basedir}</directory>
+	    		<includes>
+	    			<include>LICENSE</include>
+	    		</includes>
+	    		<targetPath>${nginx.tempfolder_}</targetPath>
+	    	</resource>
+	    	<resource>	<!-- extra nginx conf, already filtered by parent m -->
+	    		<directory>${project.build.outputDirectory}/conf</directory>
+	    		<targetPath>${nginx.tempfolder_}/conf</targetPath>
+	    	</resource>
+	    </resources>
+    
+    
     	<plugins>
         
             <!-- Download and expand whatever is needed -->
@@ -73,6 +90,28 @@
                 </executions>
 		    </plugin>
 				    
+<!--			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>move-extra-resources-to-nginx</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${nginx.tempfolder_}/conf</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.build.outputDirectory}/conf</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> -->
+				    
 	  		<!-- package as rpm, yay -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -99,8 +138,8 @@
                         <defineStatement>_app ${project.artifactId}</defineStatement>
                     </defineStatements>
 
-                    <defaultDirmode>755</defaultDirmode>
-                    <defaultFilemode>644</defaultFilemode>
+                    <defaultDirmode>775</defaultDirmode>
+                    <defaultFilemode>664</defaultFilemode>
                     <defaultUsername>${nginx.username_}</defaultUsername>
                     <defaultGroupname>${nginx.groupname_}</defaultGroupname>
                     
@@ -140,17 +179,7 @@
                             <filemode>755</filemode>                  		
                        		<directory>/etc/init.d</directory>        		
                        		<directoryIncluded>false</directoryIncluded>
-                    	</mapping>
-                    	<mapping>
-							<sources>
-                    			<source>
-                    				<location>${project.build.directory}/LICENSE</location>
-                    			</source>
-                    		</sources>
-							<directory>${lua.installfolder_}</directory>
-							<directoryIncluded>false</directoryIncluded>
-						</mapping>
-                    	
+                    	</mapping>                    	
                     </mappings>
 
 					<preinstallScriptlet>
@@ -197,13 +226,19 @@
 			<url>https://github.com/simpl/ngx_devel_kit</url>
 			<comments>Copyright (C) Marcus Clyne (contact at simpl dot it)</comments>
 		</license>
-
 		<license>
 			<name>BSD license (HttpLuaModule)</name>
 			<url>http://wiki.nginx.org/HttpLuaModule#Copyright_and_License</url>
 			<comments>Copyright (C) 2009-2013, by Xiaozhe Wang (chaoslawful) chaoslawful@gmail.com.
 					  Copyright (C) 2009-2013, by Yichun "agentzh" Zhang (章亦春) agentzh@gmail.com, CloudFlare Inc.</comments>
-		</license>
+		</license>		
+		<license>
+			<name>BSD license (LuaRedisParser)</name>
+			<url>http://wiki.nginx.org/LuaRedisParser#Copyright_.26_License</url>
+			<comments>Copyright (C) 2009, 2010, 2011, Taobao Inc., Alibaba Group ( http://www.taobao.com ).
+					  Copyright (C) 2009, 2010, 2011, by Zhang "agentzh" Yichun (章亦春) agentzh@gmail.com.</comments>
+		</license>		
+		
 	</licenses>	
 	
 </project>
