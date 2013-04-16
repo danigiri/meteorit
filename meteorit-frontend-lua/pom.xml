@@ -40,22 +40,23 @@
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
-                        <configuration>
-                            <target>
-                                <get src="${lua.url_}" 
-                                dest="${project.build.directory}/${lua.name_}.tar.gz" skipexisting="true" />
-                                <untar src="${project.build.directory}/${lua.name_}.tar.gz" dest="${project.build.directory}" compression="gzip"/>
-                                <get src="${lua-patch.url_}"
-                                dest="${project.build.directory}/${lua.name_}" skipexisting="true" />
-                                <get src="${lua-redisparser.url_}" 
-                                dest="${project.build.directory}/${lua-redisparser.name_}.tar.gz" skipexisting="true" />
-                                <untar src="${project.build.directory}/${lua-redisparser.name_}.tar.gz" 
-                                dest="${project.build.directory}" compression="gzip"/>
-                            </target>
-                        </configuration>
                         <goals>
                             <goal>run</goal>
                         </goals>
+                        <configuration>
+                            <target>
+                                <get src="${lua.url_}" 
+                                	 dest="${project.build.directory}/${lua.name_}.tar.gz" skipexisting="true" />
+                                <untar src="${project.build.directory}/${lua.name_}.tar.gz" 
+                                	   dest="${project.build.directory}" compression="gzip"/>
+                                <get src="${lua-patch.url_}"
+                                	 dest="${project.build.directory}/${lua.name_}" skipexisting="true" />
+                                <get src="${lua-redisparser.url_}" 
+                               		 dest="${project.build.directory}/${lua-redisparser.name_}.tar.gz" skipexisting="true" />
+                                <untar src="${project.build.directory}/${lua-redisparser.name_}.tar.gz" 
+                                	   dest="${project.build.directory}" compression="gzip"/>
+                            </target>
+                        </configuration>
                     </execution>
                 </executions>
 		    </plugin>
@@ -109,7 +110,11 @@
                     <defaultFilemode>644</defaultFilemode>
                     <defaultUsername>${lua.username_}</defaultUsername>
                     <defaultGroupname>${lua.groupname_}</defaultGroupname>
-                                        
+                               
+                    <requires>
+                    	<require>shunit2 &gt;= 2.1.6</require>      
+                    </requires>
+                    	
                     <mappings>
                                         	
                     	<!-- Lua JIT mappings -->
@@ -214,6 +219,18 @@
 							<directory>${lua.installfolder_}</directory>
 							<directoryIncluded>false</directoryIncluded>
 						</mapping>
+						<mapping>
+							<sources>
+                    			<source>
+                    				<location>${project.build.directory}/${project.artifactId}-installtest.sh</location>
+                    			</source>
+                    		</sources>
+   	                        <username>${lua.username_}</username>
+                            <groupname>${lua.groupname_}</groupname>  
+                            <filemode>755</filemode>                  		
+							<directory>${lua.installfolder_}/test</directory>
+							<directoryIncluded>true</directoryIncluded>
+						</mapping>
                     </mappings>
 
 			    </configuration>
@@ -229,7 +246,7 @@
 			<comments>Copyright (C) 2013 Daniel Giribet</comments>
 		</license>
 		<license>
-			<name>MIT open source license.</name>
+			<name>MIT open source license</name>
 			<url>http://opensource.org/licenses/MIT</url>
 			<comments>Copyright (C) 2005-2013 Mike Pall</comments>
 		</license>

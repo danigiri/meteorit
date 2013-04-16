@@ -13,6 +13,7 @@
     
     <properties>
     	<compile.script_>./${project.artifactId}-compile.sh</compile.script_>
+    	<test.script_>./${project.artifactId}-test.sh</test.script_>
     	<binary.architecture_>x86_64</binary.architecture_>
     	<install.prefix_>/opt</install.prefix_>
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>    	
@@ -77,6 +78,21 @@
 								<arguments>
 									<argument>-c</argument>
 									<argument>if [ -e ${compile.script_} ]; then chmod -v +x ${compile.script_}; ${compile.script_}; fi</argument>
+								</arguments>
+							</configuration>
+						</execution>
+						<execution>
+							<id>compile-and-make</id>
+							<phase>compile</phase>
+							<goals>
+								<goal>exec</goal>
+							</goals>
+							<configuration>
+								<executable>bash</executable>
+								<workingDirectory>${project.build.directory}</workingDirectory>
+								<arguments>
+									<argument>-c</argument>
+									<argument>if [ -e ${test.script_} ]; then chmod -v +x ${test.script_}; ${test.script_}; fi</argument>
 								</arguments>
 							</configuration>
 						</execution>

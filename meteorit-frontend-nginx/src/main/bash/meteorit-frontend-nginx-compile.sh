@@ -28,6 +28,7 @@ export LUAJIT_INC='${install.prefix_}/lj2/include/luajit-2.0'
 			--add-module='${nginx-lua-module.sourcefolder_}' \
 			--add-module='${nginx-httpecho-module.sourcefolder_}'	 \
 			--user='${nginx.username_}'						 \
+			--with-debug \
 			--group='${nginx.groupname_}' | pv -f -l -p -s 131 > ./configure.output
 ERR_=$?
 if [ $ERR_ -ne 0 ]; then

@@ -1,0 +1,131 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.calidos.dani.meteorit</groupId>
+	<artifactId>meteorit-test</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>rpm</packaging>
+
+	<name>Meteorit system testing component</name>
+	<description>Downloads shunit2 and compiles into into an RPM
+	</description>
+    <inceptionYear>2013</inceptionYear>
+    <url>http://dani.calidos.com</url>
+    
+    <parent>
+    	<groupId>com.calidos.dani.meteorit</groupId>
+		<artifactId>meteorit-compile-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+    	<shunit2.name_>shunit2-2.1.6</shunit2.name_>
+    	<shunit2.url_>http://shunit2.googlecode.com/files/${shunit2.name_}.tgz</shunit2.url_>
+    </properties>
+    
+    
+       <build>
+   		<plugins>
+
+            <plugin>	<!-- Download and expand whatever is needed -->
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <get src="${shunit2.url_}" 
+                                dest="${project.build.directory}/${shunit2.name_}.tar.gz" skipexisting="true" />
+                                <untar src="${project.build.directory}/${shunit2.name_}.tar.gz" 
+                                dest="${project.build.directory}" compression="gzip"/>
+                               </target>
+                        </configuration>
+                    </execution>
+                </executions>
+		    </plugin>
+   
+               <plugin>	<!-- package as rpm, yay -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <version>2.1-alpha-2</version>
+                <extensions>true</extensions>
+
+                <configuration>
+                    <packager>dani</packager>
+                    <distribution>Calidos</distribution>
+                    <group>Calidos/Meteorit</group>
+                    <copyright>See installed LICENSE file</copyright>
+                    <summary>${project.name}</summary>
+                    <description>${project.description}</description>
+                    <url>${project.url}</url>
+                    <prefix>${nginx.installfolder_}</prefix>
+                    <needarch>${binary.architecture_}</needarch>
+
+	    			<icon />
+
+                    <defineStatements>
+                        <defineStatement>_unpackaged_files_terminate_build 0</defineStatement>
+                        <defineStatement>_name ${project.artifactId}</defineStatement>
+                        <defineStatement>_app ${project.artifactId}</defineStatement>
+                    </defineStatements>
+
+                    <defaultDirmode>755</defaultDirmode>
+                    <defaultFilemode>644</defaultFilemode>
+                    <defaultUsername>${lua.username_}</defaultUsername>
+                    <defaultGroupname>${lua.groupname_}</defaultGroupname>
+                                        
+                    <mappings>
+                                        	
+                    	<!-- Lua JIT mappings -->
+						<mapping>
+							<directory>${lua.installfolder_}</directory>
+						</mapping>
+							
+						<mapping>		<!-- BIN -->
+							<directory>${lua.installfolder_}/bin</directory>
+						</mapping>
+                        <mapping>	
+                    		<sources>
+                    			<source>
+                    				<location>${lua.tempfolder_}/${lua.installfolder_}/bin</location>
+                    				<excludes>
+                    					<exclude>luajit</exclude>
+                    				</excludes>
+                    			</source>
+                    			<softlinkSource>
+                    				<destination>luajit</destination>
+                    				<location>luajit-2.0.1</location>
+                    			</softlinkSource>
+                    		</sources>
+ 	                        <username>${lua.username_}</username>
+                            <groupname>${lua.groupname_}</groupname>  
+                            <filemode>755</filemode>
+                       		<directory>${lua.installfolder_}/bin</directory>
+                       		<directoryIncluded>false</directoryIncluded>
+                    	</mapping>        
+                     </mappings>
+
+			    </configuration>
+		   </plugin>
+   
+   		</plugins>	
+   	</build>
+   	
+    <licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<comments>Copyright (C) 2013 Daniel Giribet</comments>
+		</license>
+		<license>
+			<name>GNU Lesser GPL</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<comments>Copyright (C) Kate Ward</comments>
+		</license>
+	</licenses>	
+    
+ </project>
+    

@@ -25,7 +25,7 @@ fi
 rpm -Uvh epel-release-6*.rpm
 
 yum install -q -y gcc make pcre-devel zlib-devel
-yum install -q -y rpm-build man
+yum install -q -y rpm-build man shunit2
 
 # enable port 80
 # rulepos=`/sbin/service iptables status | grep -P '\d+.*ACCEPT' | tail -1 | awk '{print $1}'`

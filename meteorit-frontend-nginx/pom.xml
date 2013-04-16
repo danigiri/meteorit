@@ -109,6 +109,31 @@
 		    </plugin>
 
 			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy-installtest</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${nginx.tempfolder_}${nginx.installfolder_}/test</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}</directory>
+									<includes>
+										<include>${project.artifactId}-installtest.sh</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-patch-plugin</artifactId>
 				<version>1.1.1</version>
@@ -129,6 +154,8 @@
 					</execution>
 				</executions>
 			</plugin>
+
+
 
 	  		<!-- package as rpm, yay -->
             <plugin>
@@ -163,11 +190,13 @@
                     
                     <requires>
                     	<require>redis</require>
+                    	<require>shunit2 &gt;= 2.1.6</require>
+                    	<require>wget</require>    
                     </requires>
                     
                     <mappings>
                     
-                    	<mapping>	<!-- nginx mapping -->
+                    	<mapping>	<!-- nginx mappings -->
                     		<sources>
                     			<source>
                     				<location>${nginx.tempfolder_}/${nginx.installfolder_}</location>
@@ -186,6 +215,16 @@
                     		<directoryIncluded>false</directoryIncluded>
                     		<filemode>755</filemode>
                     	</mapping>
+                    	<mapping>	<!-- nginx test 755 mapping -->
+                    		<sources>
+                    			<source>
+                    				<location>${nginx.tempfolder_}/${nginx.installfolder_}/test/${project.artifactId}-installtest.sh</location>
+                    			</source>
+                    		</sources>
+                    		<directory>${nginx.installfolder_}/test</directory>
+                    		<directoryIncluded>false</directoryIncluded>
+                    		<filemode>755</filemode>
+                    	</mapping>
                     	<mapping>	<!-- init.d scripts, as root -->
                     		<sources>
                     			<source>
@@ -197,7 +236,7 @@
                             <filemode>755</filemode>                  		
                        		<directory>/etc/init.d</directory>        		
                        		<directoryIncluded>false</directoryIncluded>
-                    	</mapping>                    	
+                    	</mapping>	
                     </mappings>
 
 					<preinstallScriptlet>

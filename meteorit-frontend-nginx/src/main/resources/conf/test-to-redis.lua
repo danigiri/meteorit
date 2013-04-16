@@ -7,9 +7,10 @@ if event == nil then
 	ngx.log(ngx.ERR, "no event passed to test");
 	ngx.exit(500)
 end 
- 
+
 local reqs = {
- 	{"rpush", "meteorit-queue", "hello world"},
+ 	{"set", "test", event },
+	{"get", "test"}
 }
  
 local raw_reqs = {}
@@ -26,5 +27,9 @@ if res.status ~= 200 or not res.body then
 	ngx.exit(500)
 end
  
-ngx.say("OK")
-    
+local replies = parser.parse_replies(res.body, #reqs)
+local all_replies = ''
+for i, reply in ipairs(replies) do
+		all_replies = all_replies..reply[1]
+end
+ngx.say(all_replies)

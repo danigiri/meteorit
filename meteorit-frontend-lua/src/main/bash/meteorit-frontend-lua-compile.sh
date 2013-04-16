@@ -3,10 +3,10 @@
 cd '${project.build.directory}/${lua.name_}'
 
 
-#if [ -e src/luajit ]; then
-#	echo 'Lua already built, skipping'
-#	exit 0
-#fi
+if [ -e src/luajit ]; then
+	echo 'Lua already built, skipping'
+	exit 0
+fi
 
 echo 'Starting lua build...'
 
@@ -25,7 +25,6 @@ make PREFIX=${lua.installfolder_} \
 	 LUA_LIB_DIR=${lua.tempfolder_}/${lua.installfolder_}/lib/lua/5.1 | pv -l -f -p -s 1 >> ./make.output
 echo 'Installing:'
 make install DESTDIR=${lua.tempfolder_} LUA_LIB_DIR=${lua.installfolder_}/lib/lua/5.1 | pv -l -f -p -s 1 >> ./make.output
-# test fails as it needs a script called 'prove' which I can't seem to find 
-make test
+#make test
 
 echo 'Completed'
