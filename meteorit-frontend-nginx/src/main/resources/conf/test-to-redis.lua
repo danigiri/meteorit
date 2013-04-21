@@ -30,6 +30,6 @@ end
 local replies = parser.parse_replies(res.body, #reqs)
 local all_replies = ''
 for i, reply in ipairs(replies) do
-		all_replies = all_replies..reply[1]
+		all_replies = reply[1]
 end
 ngx.say(all_replies)

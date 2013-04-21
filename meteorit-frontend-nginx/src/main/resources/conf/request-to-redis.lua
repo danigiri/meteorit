@@ -9,7 +9,7 @@ if event == nil then
 end 
  
 local reqs = {
- 	{"rpush", "meteorit-queue", "hello world"},
+ 	{"rpush", "meteorit-queue", event},
 }
  
 local raw_reqs = {}
@@ -27,4 +27,3 @@ if res.status ~= 200 or not res.body then
 end
  
 ngx.say("OK")
-    
