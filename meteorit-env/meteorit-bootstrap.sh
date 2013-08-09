@@ -24,6 +24,9 @@ if [ $? != 0 ]; then
 fi
 rpm -Uvh epel-release-6*.rpm
 
+yum install -q -y java-1.6.0-openjdk
+
+
 yum install -q -y gcc make pcre-devel zlib-devel
 yum install -q -y rpm-build man shunit2
 
@@ -33,3 +36,4 @@ yum install -q -y rpm-build man shunit2
 # iptables -I INPUT $rulepos -i eth0 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
 # /sbin/service iptables save
 # /sbin/service iptables restart
+

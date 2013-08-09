@@ -77,12 +77,16 @@
 								<workingDirectory>${project.build.directory}</workingDirectory>
 								<arguments>
 									<argument>-c</argument>
-									<argument>if [ -e ${compile.script_} ]; then chmod -v +x ${compile.script_}; ${compile.script_}; fi</argument>
+									<argument>
+											if [ -e ${compile.script_} ]; then 
+												chmod -v +x ${compile.script_}; ${compile.script_}; 
+											fi
+									</argument>
 								</arguments>
 							</configuration>
 						</execution>
 						<execution>
-							<id>compile-and-make</id>
+							<id>test-script</id>
 							<phase>compile</phase>
 							<goals>
 								<goal>exec</goal>
@@ -92,7 +96,11 @@
 								<workingDirectory>${project.build.directory}</workingDirectory>
 								<arguments>
 									<argument>-c</argument>
-									<argument>if [ -e ${test.script_} ]; then chmod -v +x ${test.script_}; ${test.script_}; fi</argument>
+									<argument>
+										if [ -e ${test.script_} ]; then 
+											chmod -v +x ${test.script_}; ${test.script_}; 
+										fi
+									</argument>
 								</arguments>
 							</configuration>
 						</execution>
