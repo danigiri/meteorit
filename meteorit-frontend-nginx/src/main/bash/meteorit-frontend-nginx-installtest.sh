@@ -32,11 +32,13 @@ testNginx() {
 }
 
 testNginxRedis() {
+
 	r_="$RANDOM"
 	url2_="$url_/test?e=$r_"
 	answer_=`wget -q -O - "$url2_"`
 	assertEquals "Nginx does not answer to the test URL ($url2_)" 0 $?
 	assertEquals "redis value isn't returned correctly" "$r_" "$answer_"
+	
 }
 
 

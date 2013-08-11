@@ -18,10 +18,8 @@
     </parent>
     
     <properties>
-   		<lua.name_>LuaJIT-2.0.1</lua.name_>
+   		<lua.name_>LuaJIT-2.0.2</lua.name_>
 		<lua.url_>http://luajit.org/download/${lua.name_}.tar.gz</lua.url_>
-		<lua-patch.name_>v2.0.1_hotfix1.patch</lua-patch.name_>
-		<lua-patch.url_>http://luajit.org/download/${lua-patch.name_}</lua-patch.url_>
 		<lua.installfolder_>${install.prefix_}/lj2</lua.installfolder_>
 		<lua.tempfolder_>${project.build.directory}/${lua.name_}-tmp</lua.tempfolder_>
 		<lua.username_>root</lua.username_>
@@ -49,8 +47,6 @@
                                 	 dest="${project.build.directory}/${lua.name_}.tar.gz" skipexisting="true" />
                                 <untar src="${project.build.directory}/${lua.name_}.tar.gz" 
                                 	   dest="${project.build.directory}" compression="gzip"/>
-                                <get src="${lua-patch.url_}"
-                                	 dest="${project.build.directory}/${lua.name_}" skipexisting="true" />
                                 <get src="${lua-redisparser.url_}" 
                                		 dest="${project.build.directory}/${lua-redisparser.name_}.tar.gz" skipexisting="true" />
                                 <untar src="${project.build.directory}/${lua-redisparser.name_}.tar.gz" 
@@ -60,26 +56,6 @@
                     </execution>
                 </executions>
 		    </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-patch-plugin</artifactId>
-				<version>1.1.1</version>
-				<configuration>
-					<backups>true</backups>
-					<strip>1</strip> <!-- remove one dir from file listing within patch -->
-					<patchFile>${project.build.directory}/${lua.name_}/${lua-patch.name_}</patchFile>
-					<targetDirectory>${project.build.directory}/${lua.name_}</targetDirectory>
-				</configuration>
-				<executions>
-					<execution>
-						<id>patch</id>
-						<phase>process-sources</phase>
-						<goals>
-							<goal>apply</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			
             <plugin>	<!-- package as rpm, yay -->
                 <groupId>org.codehaus.mojo</groupId>
@@ -125,25 +101,26 @@
 						<mapping>		<!-- BIN -->
 							<directory>${lua.installfolder_}/bin</directory>
 						</mapping>
-                        <mapping>	
-                    		<sources>
-                    			<source>
-                    				<location>${lua.tempfolder_}/${lua.installfolder_}/bin</location>
-                    				<excludes>
-                    					<exclude>luajit</exclude>
-                    				</excludes>
-                    			</source>
-                    			<softlinkSource>
-                    				<destination>luajit</destination>
-                    				<location>luajit-2.0.1</location>
-                    			</softlinkSource>
-                    		</sources>
- 	                        <username>${lua.username_}</username>
-                            <groupname>${lua.groupname_}</groupname>  
-                            <filemode>755</filemode>
-                       		<directory>${lua.installfolder_}/bin</directory>
-                       		<directoryIncluded>false</directoryIncluded>
-                    	</mapping>        
+						
+						<mapping>	
+							<sources>
+								<source>
+									<location>${lua.tempfolder_}/${lua.installfolder_}/bin</location>
+									<excludes>
+										<exclude>luajit</exclude>
+									</excludes>
+								</source>
+								<softlinkSource>
+									<destination>luajit</destination>
+									<location>luajit-2.0.2</location>
+								</softlinkSource>
+							</sources>
+							<username>${lua.username_}</username>
+							<groupname>${lua.groupname_}</groupname>  
+							<filemode>755</filemode>
+							<directory>${lua.installfolder_}/bin</directory>
+							<directoryIncluded>false</directoryIncluded>
+						</mapping>        
                     	
                     	<mapping>		<!-- INCLUDE -->
                        		<sources>
@@ -162,15 +139,15 @@
 						<mapping>	
                     		<sources>
                     			<source>
-                    				<location>${lua.tempfolder_}/${lua.installfolder_}/lib/libluajit-5.1.so.2.0.1</location>
+                    				<location>${lua.tempfolder_}/${lua.installfolder_}/lib/libluajit-5.1.so.2.0.2</location>
                     			</source>
                     			<softlinkSource>
                     				<destination>libluajit-5.1.so</destination>
-                    				<location>libluajit-5.1.so.2.0.1</location>
+                    				<location>libluajit-5.1.so.2.0.2</location>
                     			</softlinkSource>
                     			<softlinkSource>
                     				<destination>libluajit-5.1.so.2</destination>
-                    				<location>libluajit-5.1.so.2.0.1</location>
+                    				<location>libluajit-5.1.so.2.0.2</location>
                     			</softlinkSource>
                     		</sources>
  	                        <username>${lua.username_}</username>

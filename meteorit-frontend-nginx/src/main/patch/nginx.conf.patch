@@ -7,7 +7,16 @@
  worker_processes  1;
  
  #error_log  logs/error.log;
-@@ -54,6 +54,8 @@
+@@ -31,6 +31,8 @@
+     keepalive_timeout  65;
+ 
+     #gzip  on;
++    
++    lua_package_path "/opt/lj2/share/lua/resty/?.lua;;";
+ 
+     server {
+         listen       80;
+@@ -54,6 +56,8 @@
              root   html;
          }
  

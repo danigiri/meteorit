@@ -1,29 +1,30 @@
-local parser = require "redis.parser"
- 
 local args 	= ngx.req.get_uri_args()
 local event = args["event"]
 
 if event == nil then
-	ngx.log(ngx.ERR, "no event passed to test");
-	ngx.exit(500)
-end 
- 
-local reqs = {
- 	{"rpush", "meteorit-queue", event},
-}
- 
-local raw_reqs = {}
-for i, req in ipairs(reqs) do
-	table.insert(raw_reqs, parser.build_query(req))
+	ngx.log(ngx.INFO, "no event passed");
+	ngx.exit(ngx.HTTP_BAD_REQUEST)
 end
- 
--- res contains .status, .body and .header
-local res = ngx.location.capture("/redis2-connect?" .. #reqs,
-	{ body = table.concat(raw_reqs, "") })
 
-if res.status ~= 200 or not res.body then
-	ngx.log(ngx.ERR, "failed to query redis")
-	ngx.exit(500)
+local redis = require "resty.redis"
+local red = redis:new()
+
+local ok, err = red:connect("127.0.0.1", 6379)
+if not ok then
+    ngx.log(ngx.CRIT, "failed to connect to redis (", err, ")")
+	return ngx.exit(ngx.HTTP_SERVICE_UNAVAILABLE)
 end
- 
+
+ok, err = red:rpush("meteorit-queue", event)
+if not ok then
+    ngx.log(ngx.ERR, "failed to add event to redis (", err, ")")
+	return ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
+end
+
+local ok, err = red:set_keepalive(0, 100)
+if not ok then
+	ngx.say("failed to set keepalive: ", err)
+	return
+end
+
 ngx.say("OK")

@@ -25,18 +25,12 @@
     	<nginx.username_>nginx</nginx.username_>
     	<nginx.groupname_>${nginx.username_}</nginx.groupname_>
     	<nginx.installfolder_>${install.prefix_}/nginx</nginx.installfolder_>
-    	<redis2-module.name_>redis2-nginx-module</redis2-module.name_>
-    	<redis2-module.url_>https://github.com/agentzh/redis2-nginx-module/archive/v0.09.tar.gz</redis2-module.url_>
-    	<redis2-module.sourcefolder_>${project.build.directory}/${redis2-module.name_}-0.09</redis2-module.sourcefolder_>
-    	<nginx-devel-kit.url_>https://github.com/simpl/ngx_devel_kit/archive/v0.2.18.tar.gz</nginx-devel-kit.url_>
-    	<nginx-devel-kit.name_>ngx_devel_kit-0.2.18</nginx-devel-kit.name_>
-    	<nginx-devel-kit.sourcefolder_>${project.build.directory}/${nginx-devel-kit.name_}</nginx-devel-kit.sourcefolder_>
     	<nginx-lua-module.url_>https://github.com/chaoslawful/lua-nginx-module/archive/v0.7.18rc2.tar.gz</nginx-lua-module.url_>
 		<nginx-lua-module.name_>lua-nginx-module-0.7.18rc2</nginx-lua-module.name_>
 		<nginx-lua-module.sourcefolder_>${project.build.directory}/${nginx-lua-module.name_}</nginx-lua-module.sourcefolder_>
-		<nginx-httpecho-module.url_>https://github.com/agentzh/echo-nginx-module/archive/v0.45.tar.gz</nginx-httpecho-module.url_>
-		<nginx-httpecho-module.name_>echo-nginx-module-0.45</nginx-httpecho-module.name_>
-		<nginx-httpecho-module.sourcefolder_>${project.build.directory}/${nginx-httpecho-module.name_}</nginx-httpecho-module.sourcefolder_>
+		<lua-resty-redis.module.name_>lua-resty-redis</lua-resty-redis.module.name_>
+		<lua-resty-redis.module.url_>https://github.com/agentzh/lua-resty-redis/archive/v0.15.zip</lua-resty-redis.module.url_>
+		<lua-resty-redis.module.sourcefolder_>${project.build.directory}/${lua-resty-redis.module.name_}-0.15</lua-resty-redis.module.sourcefolder_>
 		<lua.installfolder_>${install.prefix_}/lj2</lua.installfolder_>
 		<skipPatch_>false</skipPatch_>	<!-- to skip reapplying patch -->
     </properties>
@@ -82,10 +76,6 @@
                                 dest="${project.build.directory}/" skipexisting="true" />
                                 <untar src="${project.build.directory}/${nginx.filename_}.tar.gz" 
                                 dest="${project.build.directory}" compression="gzip"/>
-                                <get src="${redis2-module.url_}" 
-                                dest="${project.build.directory}/${redis2-module.name_}.tar.gz" skipexisting="true" />
-                                <untar src="${project.build.directory}/${redis2-module.name_}.tar.gz" 
-                                dest="${project.build.directory}" compression="gzip"/>
                                 <get src="${nginx-devel-kit.url_}" 
                                 dest="${project.build.directory}/${nginx-devel-kit.name_}.tar.gz" skipexisting="true" />
                                 <untar src="${project.build.directory}/${nginx-devel-kit.name_}.tar.gz" 
@@ -94,11 +84,10 @@
                                 dest="${project.build.directory}/${nginx-lua-module.name_}.tar.gz" skipexisting="true" />
                                 <untar src="${project.build.directory}/${nginx-lua-module.name_}.tar.gz" 
                                 dest="${project.build.directory}" compression="gzip"/>
-                                <get src="${nginx-httpecho-module.url_}" 
-                                dest="${project.build.directory}/${nginx-httpecho-module.name_}.tar.gz" skipexisting="true" />
-                                <untar src="${project.build.directory}/${nginx-httpecho-module.name_}.tar.gz" 
-                                dest="${project.build.directory}" compression="gzip"/>                                
-                                
+                                <get src="${lua-resty-redis.module.url_}"
+                                dest="${project.build.directory}/${lua-resty-redis.module.name_}.zip" skipexisting="true" />
+                                <unzip src="${project.build.directory}/${lua-resty-redis.module.name_}.zip"
+                                dest="${project.build.directory}" />                                
                             </target>
                         </configuration>
                         <goals>
@@ -133,7 +122,7 @@
 				</executions>
 			</plugin>
 
-			<plugin>
+			<plugin>	<!-- global nginx configuration patch (diff -u ./nginx-1.2.3/conf/nginx.conf ./nginx-1.2.3-tmp/opt/nginx/conf/nginx.conf) -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-patch-plugin</artifactId>
 				<version>1.1.1</version>
@@ -234,25 +223,44 @@
  	                        <username>root</username>
                             <groupname>root</groupname>  
                             <filemode>755</filemode>                  		
-                       		<directory>/etc/init.d</directory>        		
+                       		<directory>/etc/init.d</directory>  		
                        		<directoryIncluded>false</directoryIncluded>
                     	</mapping>	
+                    	
+                    	<mapping>	<!-- lua-resty-redis mappings: library folder -->
+                    		<username>root</username>
+                            <groupname>root</groupname>
+							<filemode>755</filemode>
+                       		<directory>${lua.installfolder_}/share/lua/5.1/resty</directory>
+                    	</mapping>
+                    	<mapping>	<!-- the actual .lua library -->
+                    		<sources>
+                    			<source>
+                    				<location>${project.build.directory}/${lua-resty-redis.module.name_}-0.15/lib/resty/redis.lua</location>
+                    			</source>
+                    		</sources>
+      						<username>root</username>
+                            <groupname>root</groupname>
+							<filemode>664</filemode>
+                       		<directory>${lua.installfolder_}/share/lua/5.1/resty</directory>
+                       		<directoryIncluded>false</directoryIncluded>
+                    	</mapping>
                     </mappings>
 
 					<preinstallScriptlet>
-						<scriptFile>target/classes/preinstall.sh</scriptFile>
+						<scriptFile>${project.build.directory}/preinstall.sh</scriptFile>
 						<fileEncoding>utf-8</fileEncoding>
 					</preinstallScriptlet>                    
 					<postinstallScriptlet>
-						<scriptFile>target/classes/postinstall.sh</scriptFile>
+						<scriptFile>${project.build.directory}/postinstall.sh</scriptFile>
 						<fileEncoding>utf-8</fileEncoding>
 					</postinstallScriptlet>                    
 					<preremoveScriptlet>
-						<scriptFile>target/classes/preremove.sh</scriptFile>
+						<scriptFile>${project.build.directory}/preremove.sh</scriptFile>
 						<fileEncoding>utf-8</fileEncoding>
 					</preremoveScriptlet>                    
 					<postremoveScriptlet>
-						<scriptFile>target/classes/postremove.sh</scriptFile>
+						<scriptFile>${project.build.directory}/postremove.sh</scriptFile>
 						<fileEncoding>utf-8</fileEncoding>
 					</postremoveScriptlet>                    
 			    </configuration>
@@ -274,35 +282,17 @@
 					  * Copyright (C) 2011-2013 Nginx, Inc.</comments>
 		</license>
 		<license>
-			<name>BSD license (Http2Redis)</name>
-			<url>http://wiki.nginx.org/HttpRedis2Module#Copyright_.26_License</url>
-			<comments>Copyright (C) 2010-2012, by Yichun "agentzh" Zhang (章亦春) agentzh@gmail.com</comments>
-		</license>
-		<license>
-			<name>BSD license (ngx_devel_kit)</name>
-			<url>https://github.com/simpl/ngx_devel_kit</url>
-			<comments>Copyright (C) Marcus Clyne (contact at simpl dot it)</comments>
-		</license>
-		<license>
 			<name>BSD license (HttpLuaModule)</name>
 			<url>http://wiki.nginx.org/HttpLuaModule#Copyright_and_License</url>
 			<comments>Copyright (C) 2009-2013, by Xiaozhe Wang (chaoslawful) chaoslawful@gmail.com.
 					  Copyright (C) 2009-2013, by Yichun "agentzh" Zhang (章亦春) agentzh@gmail.com, CloudFlare Inc.</comments>
 		</license>		
 		<license>
-			<name>BSD license (LuaRedisParser)</name>
-			<url>http://wiki.nginx.org/LuaRedisParser#Copyright_.26_License</url>
-			<comments>Copyright (C) 2009, 2010, 2011, Taobao Inc., Alibaba Group ( http://www.taobao.com ).
-					  Copyright (C) 2009, 2010, 2011, by Zhang "agentzh" Yichun (章亦春) agentzh@gmail.com.</comments>
-		</license>
-		<license>
-			<name>BSD license (HttpEchoModule)</name>
-			<url>http://wiki.nginx.org/HttpEchoModule#Copyright_.26_License</url>
-			<comments>Copyright (c) 2009-2013, Yichun "agentzh" Zhang (章亦春) agentzh@gmail.com, CloudFlare Inc.</comments>
+			<name>BSD license (lua-resty-redis)</name>
+			<url>https://github.com/agentzh/lua-resty-redis#copyright-and-license</url>
+			<comments>Copyright (C) 2012-2013, by Yichun Zhang (agentzh) agentzh@gmail.com, CloudFlare Inc.</comments>
 		</license>		
-		
-		
-		
+				
 	</licenses>	
 	
 </project>

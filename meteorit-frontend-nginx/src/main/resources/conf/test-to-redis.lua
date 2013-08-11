@@ -1,35 +1,46 @@
-local parser = require "redis.parser"
- 
-local args 	= ngx.req.get_uri_args()
+ local args 	= ngx.req.get_uri_args()
 local event = args["event"]
+local testKey = "___meteorit-test-key"
 
 if event == nil then
 	ngx.log(ngx.ERR, "no event passed to test");
-	ngx.exit(500)
+	ngx.exit(ngx.HTTP_BAD_REQUEST)
 end 
 
-local reqs = {
- 	{"set", "test", event },
-	{"get", "test"}
-}
- 
-local raw_reqs = {}
-for i, req in ipairs(reqs) do
-	table.insert(raw_reqs, parser.build_query(req))
-end
- 
--- res contains .status, .body and .header
-local res = ngx.location.capture("/redis2-connect?" .. #reqs,
-	{ body = table.concat(raw_reqs, "") })
 
-if res.status ~= 200 or not res.body then
-	ngx.log(ngx.ERR, "failed to query redis")
-	ngx.exit(500)
+local redis = require "resty.redis"
+local red = redis:new()
+
+red:set_timeout(1000) -- 1 sec
+
+local ok, err = red:connect("127.0.0.1", 6379)
+if not ok then
+    ngx.log(ngx.CRIT, "failed to connect to redis (", err, ")")
+	return ngx.exit(ngx.HTTP_SERVICE_UNAVAILABLE)
 end
- 
-local replies = parser.parse_replies(res.body, #reqs)
-local all_replies = ''
-for i, reply in ipairs(replies) do
-		all_replies = reply[1]
+
+ok, err = red:set(testKey, event)
+if not ok then
+    ngx.log(ngx.ERR, "failed to set test value to redis (", err, ")")
+	return ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
 end
-ngx.say(all_replies)
+
+local res, err = red:get(testKey)
+if not res then
+    ngx.log(ngx.ERR, "failed to set test value to redis (", err, ")")
+	return ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
+end
+     
+ngx.say(res)
+
+local ok, err = red:del(testKey)
+if not ok then
+    ngx.log(ngx.ERR, "failed to set test value to redis (", err, ")")
+	return ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
+end
+
+local ok, err = red:close()
+if not ok then
+    ngx.log(ngx.ERR, "failed to close (", err, ")")
+	return
+end

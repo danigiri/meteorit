@@ -16,13 +16,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
- # first time installation
-if [ "$1" -eq '1' ]; then
-
-	# add nginx nonprivileged user
+# add nginx nonprivileged user
+id '${nginx.username_}' 2>/dev/null
+if [ $? -eq 1 ]; then
 	echo 'Adding nginx daemon user'
-	id '${nginx.username_}' 2>/dev/null
-	retval=$?
-	[ $retval -eq 1 ] && /usr/sbin/useradd -c 'Nginx daemon' -M -r -s /sbin/nologin ${nginx.username_}
-
+	 /usr/sbin/useradd -c 'Nginx daemon' -M -r -s /sbin/nologin ${nginx.username_}
 fi

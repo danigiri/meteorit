@@ -24,11 +24,7 @@ if [ $? != 0 ]; then
 fi
 rpm -Uvh epel-release-6*.rpm
 
-yum install -q -y java-1.6.0-openjdk
-
-
-yum install -q -y gcc make pcre-devel zlib-devel
-yum install -q -y rpm-build man shunit2
+yum install -q -y java-1.6.0-openjdk pcre zlib
 
 # enable port 80
 # rulepos=`/sbin/service iptables status | grep -P '\d+.*ACCEPT' | tail -1 | awk '{print $1}'`
