@@ -1,0 +1,116 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.calidos.dani.meteorit</groupId>
+	<artifactId>meteorit-backend-zookeeper</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>rpm</packaging>
+
+	<name>Meteorit system backend zookeeper component</name>
+	<description>Downloads zookeper and runs it under 'mon' supervisor
+	</description>
+    <inceptionYear>2013</inceptionYear>
+    <url>http://dani.calidos.com</url>
+    
+    <parent>
+    	<groupId>com.calidos.dani.meteorit</groupId>
+		<artifactId>meteorit-compile-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+    </parent>
+    
+    <properties>
+    	<mon.version_>1.2.2</mon.version_>
+		<mon.url_>https://github.com/visionmedia/mon/archive/${mon.version_}.tar.gz</mon.url_>
+		<mon.sourcefolder_>${project.build.directory}/mon-${mon.version_}</mon.sourcefolder_>
+		<mon.installfolder_>${install.prefix_}/mon</mon.installfolder_>
+		<mon.username_>root</mon.username_>
+		<mon.groupname_>root</mon.groupname_>
+    </properties>
+    
+    <build>
+   		<plugins>
+
+            <plugin>	<!-- Download and expand whatever is needed -->
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <get src="${mon.url_}" 
+                                	 dest="${project.build.directory}/mon-${mon.version_}.tar.gz" skipexisting="true" />
+                                <untar src="${project.build.directory}/mon-${mon.version_}.tar.gz" 
+                                	   dest="${project.build.directory}" compression="gzip"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+		    </plugin>
+		    
+		                <plugin>	<!-- package as rpm, yay -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <version>2.1-alpha-2</version>
+                <extensions>true</extensions>
+
+                <configuration>
+                    <packager>dani</packager>
+                    <distribution>Calidos</distribution>
+                    <group>Calidos/Meteorit</group>
+                    <copyright>See installed LICENSE file</copyright>
+                    <summary>${project.name}</summary>
+                    <description>${project.description}</description>
+                    <url>${project.url}</url>
+                    <prefix>${nginx.installfolder_}</prefix>
+                    <needarch>${binary.architecture_}</needarch>
+
+	    			<icon />
+
+                    <defineStatements>
+                        <defineStatement>_unpackaged_files_terminate_build 0</defineStatement>
+                        <defineStatement>_name ${project.artifactId}</defineStatement>
+                        <defineStatement>_app ${project.artifactId}</defineStatement>
+                    </defineStatements>
+
+                    <defaultDirmode>755</defaultDirmode>
+                    <defaultFilemode>644</defaultFilemode>
+                    <defaultUsername>${mon.username_}</defaultUsername>
+                    <defaultGroupname>${mon.groupname_}</defaultGroupname>
+                               
+                    <requires>
+                    	<require>shunit2 &gt;= 2.1.6</require>      
+                    </requires>
+                    	
+                    <mappings>
+                                        	
+                    	<!-- 'mon' mappings -->						
+						<mapping>
+							<directory>${mon.installfolder_}</directory>
+						</mapping>
+						<mapping>	
+							<sources>
+								<source>
+									<location>${mon.sourcefolder_}/mon</location>
+								</source>
+							</sources>
+							<username>${mon.username_}</username>
+							<groupname>${mon.groupname_}</groupname>  
+							<filemode>755</filemode>
+							<directory>${mon.installfolder_}/bin</directory>
+						</mapping>        
+                    	
+
+                    </mappings>
+
+			    </configuration>
+		   </plugin>
+		    
+		    
+		</plugins>
+	</build>
+		    
+</project>
+		    
