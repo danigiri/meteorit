@@ -50,3 +50,5 @@ export JAVA_HOME=/usr'
 echo '************************************'
  
 echo 'Installed development stuff.'
+
+# mvn package && find target/ -name '*.rpm' -exec rpm -qpvvl '{}' \; -print

@@ -1,6 +1,5 @@
-#!/bin/bash
 
-# POSTREMOVAL script for meteorit-frontend
+# common meteorit shell script functions for meteorit
 
 #  Copyright 2013 Daniel Giribet <dani - calidos.cat>
 #
@@ -16,9 +15,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-. ${install.prefix_}/share/meteorit/meteorit-common.sh
+remove_user() {
 
-# last time
-if [ "$1" == '0' ]; then
-	remove_user '${zookeeper.username_}'
-fi
+	id "$1" 2>/dev/null
+	if [ $? -eq 0 ]; then
+		echo "Deleting '$1' user..."
+		/usr/sbin/userdel -f "$1"
+	else
+		echo "Can't delete '$1' user as it doesn't exist"
+	fi
+	
+}
+
+
+add_daemon_user() {
+
+	id "$1" 2>/dev/null
+	if [ $? -eq 1 ]; then
+		echo "Adding '$1' daemon user"
+		 /usr/sbin/useradd -c "$1 daemon" -M -r -s /sbin/nologin "$1"
+	fi
+
+}
+

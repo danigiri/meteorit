@@ -16,9 +16,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# add nginx nonprivileged user
-id '${nginx.username_}' 2>/dev/null
-if [ $? -eq 1 ]; then
-	echo 'Adding nginx daemon user'
-	 /usr/sbin/useradd -c 'Nginx daemon' -M -r -s /sbin/nologin ${nginx.username_}
-fi
+. ${install.prefix_}/share/meteorit/meteorit-common.sh
+
+# conditionally add nginx nonprivileged user
+add_daemon_user '${nginx.username_}'

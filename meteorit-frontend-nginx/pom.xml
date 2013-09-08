@@ -161,7 +161,7 @@
                     <summary>${project.name}</summary>
                     <description>${project.description}</description>
                     <url>${project.url}</url>
-                    <prefix>${nginx.installfolder_}</prefix>
+                    <prefix>${install.prefix_}</prefix>
                     <needarch>x86_64</needarch>
 
 	    			<icon />
@@ -181,6 +181,7 @@
                     	<require>redis</require>
                     	<require>shunit2 &gt;= 2.1.6</require>
                     	<require>wget</require>    
+                    	<require>meteorit-env</require>
                     </requires>
                     
                     <mappings>

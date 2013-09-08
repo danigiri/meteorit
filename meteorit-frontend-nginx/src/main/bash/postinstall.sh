@@ -16,6 +16,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+. ${install.prefix_}/share/meteorit/meteorit-common.sh
+
  # first time installation
 if [ "$1" -eq '1' ]; then
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# POSTREMOVAL script for meteorit-frontend
+# PREINSTALLATION script for meteorit-backend
 
 #  Copyright 2013 Daniel Giribet <dani - calidos.cat>
 #
@@ -16,9 +16,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
 . ${install.prefix_}/share/meteorit/meteorit-common.sh
 
-# last time
-if [ "$1" == '0' ]; then
-	remove_user '${zookeeper.username_}'
-fi
+# add zookeeper nonprivileged user
+add_daemon_user '${zookeeper.username_}'

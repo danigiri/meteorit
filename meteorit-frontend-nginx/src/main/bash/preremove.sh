@@ -16,6 +16,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+. ${install.prefix_}/share/meteorit/meteorit-common.sh
+
 nginx_logfolder=${nginx.installfolder_}/logs
 ngnix_fastcgifolder=${nginx.installfolder_}/fastcgi_temp
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# POSTREMOVAL script for meteorit-frontend
+# POSTREMOVAL script for meteorit-backend-zookeeper
 
 #  Copyright 2013 Daniel Giribet <dani - calidos.cat>
 #

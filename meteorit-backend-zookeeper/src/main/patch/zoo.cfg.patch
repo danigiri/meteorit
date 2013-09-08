@@ -1,0 +1,21 @@
+--- zoo_sample.cfg	2013-09-08 20:57:12.000000000 +0200
++++ zoo.cfg	2013-09-08 20:54:04.000000000 +0200
+@@ -9,7 +9,7 @@
+ # the directory where the snapshot is stored.
+ # do not use /tmp for storage, /tmp here is just 
+ # example sakes.
+-dataDir=/tmp/zookeeper
++dataDir=${zookeeper.installfolder_}/var
+ # the port at which the clients will connect
+ clientPort=2181
+ #
+@@ -19,7 +19,7 @@
+ # http://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_maintenance
+ #
+ # The number of snapshots to retain in dataDir
+-#autopurge.snapRetainCount=3
++autopurge.snapRetainCount=3
+ # Purge task interval in hours
+ # Set to "0" to disable auto purge feature
+-#autopurge.purgeInterval=1
++autopurge.purgeInterval=1

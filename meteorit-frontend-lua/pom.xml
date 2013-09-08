@@ -71,7 +71,7 @@
                     <summary>${project.name}</summary>
                     <description>${project.description}</description>
                     <url>${project.url}</url>
-                    <prefix>${nginx.installfolder_}</prefix>
+                    <prefix>${install.prefix_}</prefix>
                     <needarch>${binary.architecture_}</needarch>
 
 	    			<icon />

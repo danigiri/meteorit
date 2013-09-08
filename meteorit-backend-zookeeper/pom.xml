@@ -22,8 +22,13 @@
 		<mon.url_>https://github.com/visionmedia/mon/archive/${mon.version_}.tar.gz</mon.url_>
 		<mon.sourcefolder_>${project.build.directory}/mon-${mon.version_}</mon.sourcefolder_>
 		<mon.installfolder_>${install.prefix_}/mon</mon.installfolder_>
-		<mon.username_>root</mon.username_>
-		<mon.groupname_>root</mon.groupname_>
+		<zookeeper.version_>3.4.5</zookeeper.version_>
+		<zookeeper.url_>http://ftp.cixug.es/apache/zookeeper/zookeeper-${zookeeper.version_}/zookeeper-${zookeeper.version_}.tar.gz</zookeeper.url_>
+		<zookeeper.sourcefolder_>${project.build.directory}/zoookeeper-${zookeeper.version_}</zookeeper.sourcefolder_>
+		<zookeeper.installfolder_>${install.prefix_}/zookeeper</zookeeper.installfolder_>
+		<zookeeper.username_>root</zookeeper.username_>
+		<zookeeper.groupname_>root</zookeeper.groupname_>
+		<skipPatch_>false</skipPatch_>	<!-- to skip reapplying patch -->
     </properties>
     
     <build>
@@ -44,13 +49,39 @@
                                 	 dest="${project.build.directory}/mon-${mon.version_}.tar.gz" skipexisting="true" />
                                 <untar src="${project.build.directory}/mon-${mon.version_}.tar.gz" 
                                 	   dest="${project.build.directory}" compression="gzip"/>
+                                <get src="${zookeeper.url_}" 
+                                	 dest="${project.build.directory}/zookeeper-${zookeeper.version_}.tar.gz" skipexisting="true" />
+                                <untar src="${project.build.directory}/zookeeper-${zookeeper.version_}.tar.gz" 
+                                	   dest="${project.build.directory}" compression="gzip"/>
                             </target>
                         </configuration>
                     </execution>
                 </executions>
 		    </plugin>
 		    
-		                <plugin>	<!-- package as rpm, yay -->
+		    <plugin>	<!-- zookeeper configuration patch (diff -u zoo_sample.cfg zoo.cfg) -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-patch-plugin</artifactId>
+				<version>1.1.1</version>
+				<configuration>
+					<backups>false</backups>
+					<patchFile>${basedir}/src/main/patch/zoo.cfg.patch</patchFile>
+					<targetDirectory>${zookeeper.sourcefolder_}/conf/</targetDirectory>
+					<orginalFile>zoo.conf</orginalFile>
+					<skipApplication>${skipPatch_}</skipApplication>
+				</configuration>
+				<executions>
+					<execution>
+						<id>patch</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>apply</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		    
+			<plugin>	<!-- package as rpm, yay -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>rpm-maven-plugin</artifactId>
                 <version>2.1-alpha-2</version>
@@ -64,7 +95,7 @@
                     <summary>${project.name}</summary>
                     <description>${project.description}</description>
                     <url>${project.url}</url>
-                    <prefix>${nginx.installfolder_}</prefix>
+                    <prefix>${install.prefix_}</prefix>
                     <needarch>${binary.architecture_}</needarch>
 
 	    			<icon />
@@ -77,11 +108,12 @@
 
                     <defaultDirmode>755</defaultDirmode>
                     <defaultFilemode>644</defaultFilemode>
-                    <defaultUsername>${mon.username_}</defaultUsername>
-                    <defaultGroupname>${mon.groupname_}</defaultGroupname>
+                    <defaultUsername>${zookeeper.username_}</defaultUsername>
+                    <defaultGroupname>${zookeeper.groupname_}</defaultGroupname>
                                
                     <requires>
                     	<require>shunit2 &gt;= 2.1.6</require>      
+                    	<require>meteorit-env</require>
                     </requires>
                     	
                     <mappings>
@@ -89,6 +121,15 @@
                     	<!-- 'mon' mappings -->						
 						<mapping>
 							<directory>${mon.installfolder_}</directory>
+							<username>root</username>
+							<groupname>root</groupname>
+							<filemode>755</filemode>
+						</mapping>
+						<mapping>
+							<directory>${mon.installfolder_}/log</directory>
+							<username>root</username>
+							<groupname>root</groupname>
+							<filemode>755</filemode>						
 						</mapping>
 						<mapping>	
 							<sources>
@@ -96,13 +137,52 @@
 									<location>${mon.sourcefolder_}/mon</location>
 								</source>
 							</sources>
-							<username>${mon.username_}</username>
-							<groupname>${mon.groupname_}</groupname>  
+							<username>root</username>
+							<groupname>root</groupname>
 							<filemode>755</filemode>
 							<directory>${mon.installfolder_}/bin</directory>
 						</mapping>        
                     	
-
+						<!-- 'zookeeper' mappings -->
+						<mapping>
+							<sources>
+								<source>
+									<location>${zookeeper.sourcefolder_}/bin</location>
+									<includes>
+										<include>*.sh</include>
+									</includes>
+								</source>
+							</sources>
+							<directory>${zookeeper.installfolder_}/bin</directory>
+							<directoryIncluded>true</directoryIncluded>
+							<username>${zookeeper.username_}</username>
+							<groupname>${zookeeper.groupname_}</groupname>
+							<filemode>755</filemode>
+						</mapping>
+						<mapping>
+							<sources>
+								<source>
+									<location>${zookeeper.sourcefolder_}/zookeeper-${zookeeper.version_}.jar</location>
+								</source>
+							</sources>
+							<directory>${zookeeper.installfolder_}</directory>
+						</mapping>
+						<mapping>
+							<sources>
+								<source>
+									<location>${zookeeper.sourcefolder_}/conf/</location>
+									<includes>
+										<include>zoo.cfg</include>
+										<include>log4j.properties</include>
+									</includes>
+								</source>
+							</sources>
+							<directory>${zookeeper.installfolder_}/conf</directory>
+						</mapping>
+						<mapping>
+							<directory>${zookeeper.installfolder_}/var</directory>
+						</mapping>
+						
                     </mappings>
 
 			    </configuration>
@@ -111,6 +191,19 @@
 		    
 		</plugins>
 	</build>
+		    
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<comments>Copyright (C) 2013 Daniel Giribet</comments>
+		</license>
+		<license>
+			<name>MIT </name>
+			<url>http://opensource.org/licenses/MIT</url>
+			<comments>Copyright (C) TJ Holowaychuk</comments>
+		</license>
+	</licenses>	
 		    
 </project>
 		    
