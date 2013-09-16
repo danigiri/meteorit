@@ -28,30 +28,37 @@ source /etc/rc.d/init.d/functions
 # Check that networking is up.
 [ "$NETWORKING" = "no" ] && exit 0
 
+
+retval_=0
+mon_=${install.prefix_}/mon/bin/mon
+mon_log_=/var/log/mon-zookeeper.log
+pidfile_=/var/run/zookeeper.pid
+monpid_=/var/run/mon-zookeeper.pid
+desc_="ZooKeeper daemon"
+lockfile_=/var/lock/subsys/zookeeper
+zookeeper_="${zookeeper.installfolder_}/bin/zkServer.sh start"
+
+
 source ${zookeeper.installfolder_}/bin/zkEnv.sh
-
-RETVAL=0
-PIDFILE="${ZOOPIDFILE}"
-desc="ZooKeeper daemon"
-
-lockfile=/var/lock/subsys/zookeeper
+export ZOO_LOG_DIR=
 
 start() {
-  echo -n $"Starting ZooKeeper daemon (zookeeper): "
-
-  RETVAL=$?
-  echo
-  [ $RETVAL -eq 0 ] && touch "$lockfile"
-  return $RETVAL
+ 	echo -n $"Starting $desc_ (zookeeper): "
+	$mon_ -l "$mon_log_" -s 1  -p "$pidfile_" -m "$monpid_" -d "su - '${zookeeper.username_}' -m --session-command='sh $zookeeper_'"
+  	retval_=$?
+	echo
+  	[ $retval_ -eq 0 ] && touch "$lockfile_"
+    return $retval_
 }
 
 stop() {
-  echo -n $"Stopping ZooKeeper daemon (zookeeper): "
-
-  RETVAL=$?
-  sleep 5
-  echo
-  [ $RETVAL -eq 0 ] && rm -f "$lockfile" $PIDFILE
+ 	echo -n $"Stopping ZooKeeper daemon (zookeeper): "
+	kill -QUIT `cat "$monpid_"`
+  	retval_=$?
+  	sleep 5
+  	echo
+  	[ $retval_ -eq 0 ] && rm -f "$lockfile_" "$pidfile_" "$monpid_"
+    return $retval_
 }
 
 restart() {
@@ -60,8 +67,8 @@ restart() {
 }
 
 checkstatus(){
-
-  RETVAL=$?
+	$mon_ -S --pidfile "$pidfile_"
+	retval_=$?
 }
 
 condrestart(){
@@ -89,4 +96,4 @@ case "$1" in
     exit 1
 esac
 
-exit $RETVAL
+exit $retval_

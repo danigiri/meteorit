@@ -29,12 +29,30 @@ remove_user() {
 
 
 add_daemon_user() {
+# <username> <homedir>
 
 	id "$1" 2>/dev/null
 	if [ $? -eq 1 ]; then
 		echo "Adding '$1' daemon user"
-		 /usr/sbin/useradd -c "$1 daemon" -M -r -s /sbin/nologin "$1"
+		if [ $# -eq 2 ]; then
+			 /usr/sbin/useradd -c "$1 daemon" -d "$2" -M -r -s /sbin/nologin "$1"
+		else
+			 /usr/sbin/useradd -c "$1 daemon" -M -r -s /sbin/nologin "$1"
+		fi		
 	fi
 
 }
 
+add_user() {
+# <username> <homedir>
+	id "$1" 2>/dev/null
+	if [ $? -eq 1 ]; then
+		echo "Adding '$1' user"
+		if [ $# -eq 2 ]; then
+			 /usr/sbin/useradd -c "$1 daemon" -d "$2" -M -r "$1"
+		else
+			 /usr/sbin/useradd -c "$1 daemon" -M -r "$1"
+		fi		
+	fi
+
+}

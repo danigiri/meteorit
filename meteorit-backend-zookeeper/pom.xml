@@ -18,20 +18,30 @@
     </parent>
     
     <properties>
-    	<mon.version_>1.2.2</mon.version_>
-		<mon.url_>https://github.com/visionmedia/mon/archive/${mon.version_}.tar.gz</mon.url_>
-		<mon.sourcefolder_>${project.build.directory}/mon-${mon.version_}</mon.sourcefolder_>
-		<mon.installfolder_>${install.prefix_}/mon</mon.installfolder_>
 		<zookeeper.version_>3.4.5</zookeeper.version_>
 		<zookeeper.url_>http://ftp.cixug.es/apache/zookeeper/zookeeper-${zookeeper.version_}/zookeeper-${zookeeper.version_}.tar.gz</zookeeper.url_>
-		<zookeeper.sourcefolder_>${project.build.directory}/zoookeeper-${zookeeper.version_}</zookeeper.sourcefolder_>
+		<zookeeper.sourcefolder_>${project.build.directory}/zookeeper-${zookeeper.version_}</zookeeper.sourcefolder_>
 		<zookeeper.installfolder_>${install.prefix_}/zookeeper</zookeeper.installfolder_>
-		<zookeeper.username_>root</zookeeper.username_>
-		<zookeeper.groupname_>root</zookeeper.groupname_>
+		<zookeeper.datafolder_>/var/lib/zookeeper</zookeeper.datafolder_>
+		<zookeeper.logfolder_>/var/log/zookeeper</zookeeper.logfolder_>
+		<zookeeper.username_>zookeeper</zookeeper.username_>
+		<zookeeper.groupname_>zookeeper</zookeeper.groupname_>
 		<skipPatch_>false</skipPatch_>	<!-- to skip reapplying patch -->
     </properties>
     
     <build>
+    
+    <resources>	<!-- this overwrites zookeeper's default logging properties file -->
+    	<resource>
+    		<directory>src/main/resources/conf</directory>
+    		<targetPath>${zookeeper.sourcefolder_}/conf</targetPath>
+    		<includes>
+    			<include>log4j.properties</include>
+    			<include>zookeeper-env.sh</include>
+    		</includes>
+    		<filtering>true</filtering>
+    	</resource>
+    </resources>
    		<plugins>
 
             <plugin>	<!-- Download and expand whatever is needed -->
@@ -45,10 +55,6 @@
                         </goals>
                         <configuration>
                             <target>
-                                <get src="${mon.url_}" 
-                                	 dest="${project.build.directory}/mon-${mon.version_}.tar.gz" skipexisting="true" />
-                                <untar src="${project.build.directory}/mon-${mon.version_}.tar.gz" 
-                                	   dest="${project.build.directory}" compression="gzip"/>
                                 <get src="${zookeeper.url_}" 
                                 	 dest="${project.build.directory}/zookeeper-${zookeeper.version_}.tar.gz" skipexisting="true" />
                                 <untar src="${project.build.directory}/zookeeper-${zookeeper.version_}.tar.gz" 
@@ -65,9 +71,10 @@
 				<version>1.1.1</version>
 				<configuration>
 					<backups>false</backups>
-					<patchFile>${basedir}/src/main/patch/zoo.cfg.patch</patchFile>
-					<targetDirectory>${zookeeper.sourcefolder_}/conf/</targetDirectory>
-					<orginalFile>zoo.conf</orginalFile>
+					<patchFile>${project.build.outputDirectory}/filtered-zoo.cfg.patch</patchFile>
+					<targetDirectory>${zookeeper.sourcefolder_}/conf</targetDirectory>
+					<originalFile>${zookeeper.sourcefolder_}/conf/zoo_sample.cfg</originalFile>
+					<destFile>${zookeeper.sourcefolder_}/conf/zoo.cfg</destFile>
 					<skipApplication>${skipPatch_}</skipApplication>
 				</configuration>
 				<executions>
@@ -114,35 +121,11 @@
                     <requires>
                     	<require>shunit2 &gt;= 2.1.6</require>      
                     	<require>meteorit-env</require>
+                    	<require>meteorit-backend-mon</require>
                     </requires>
                     	
                     <mappings>
                                         	
-                    	<!-- 'mon' mappings -->						
-						<mapping>
-							<directory>${mon.installfolder_}</directory>
-							<username>root</username>
-							<groupname>root</groupname>
-							<filemode>755</filemode>
-						</mapping>
-						<mapping>
-							<directory>${mon.installfolder_}/log</directory>
-							<username>root</username>
-							<groupname>root</groupname>
-							<filemode>755</filemode>						
-						</mapping>
-						<mapping>	
-							<sources>
-								<source>
-									<location>${mon.sourcefolder_}/mon</location>
-								</source>
-							</sources>
-							<username>root</username>
-							<groupname>root</groupname>
-							<filemode>755</filemode>
-							<directory>${mon.installfolder_}/bin</directory>
-						</mapping>        
-                    	
 						<!-- 'zookeeper' mappings -->
 						<mapping>
 							<sources>
@@ -179,12 +162,48 @@
 							</sources>
 							<directory>${zookeeper.installfolder_}/conf</directory>
 						</mapping>
-						<mapping>
-							<directory>${zookeeper.installfolder_}/var</directory>
+						<mapping>	<!-- data folder -->
+							<directory>${zookeeper.datafolder_}</directory>
+							<username>root</username>
+							<groupname>${zookeeper.groupname_}</groupname>
+							<filemode>775</filemode>							
 						</mapping>
+						<mapping>	<!-- data folder -->
+							<directory>${zookeeper.logfolder_}</directory>
+							<username>root</username>
+							<groupname>${zookeeper.groupname_}</groupname>
+							<filemode>775</filemode>	
+						</mapping>
+						<mapping>	<!-- init.d scripts, as root -->
+                    		<sources>
+                    			<source>
+                    				<location>${project.build.outputDirectory}/init.d</location>
+                    			</source>
+                    		</sources>
+ 	                        <username>root</username>
+                            <groupname>root</groupname>  
+                            <filemode>755</filemode>                  		
+                       		<directory>/etc/init.d</directory>  		
+                       		<directoryIncluded>false</directoryIncluded>
+                    	</mapping>	
 						
                     </mappings>
-
+					<preinstallScriptlet>
+						<scriptFile>${project.build.directory}/preinstall.sh</scriptFile>
+						<fileEncoding>utf-8</fileEncoding>
+					</preinstallScriptlet>                    
+					<postinstallScriptlet>
+						<scriptFile>${project.build.directory}/postinstall.sh</scriptFile>
+						<fileEncoding>utf-8</fileEncoding>
+					</postinstallScriptlet>                    
+					<preremoveScriptlet>
+						<scriptFile>${project.build.directory}/preremove.sh</scriptFile>
+						<fileEncoding>utf-8</fileEncoding>
+					</preremoveScriptlet>                    
+					<postremoveScriptlet>
+						<scriptFile>${project.build.directory}/postremove.sh</scriptFile>
+						<fileEncoding>utf-8</fileEncoding>
+					</postremoveScriptlet>
 			    </configuration>
 		   </plugin>
 		    
@@ -199,9 +218,9 @@
 			<comments>Copyright (C) 2013 Daniel Giribet</comments>
 		</license>
 		<license>
-			<name>MIT </name>
-			<url>http://opensource.org/licenses/MIT</url>
-			<comments>Copyright (C) TJ Holowaychuk</comments>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<comments>ZookKeeper credits (http://zookeeper.apache.org/credits.html)</comments>
 		</license>
 	</licenses>	
 		    

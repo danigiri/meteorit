@@ -19,5 +19,6 @@
 
 . ${install.prefix_}/share/meteorit/meteorit-common.sh
 
-# add zookeeper nonprivileged user
-add_daemon_user '${zookeeper.username_}'
+# add zookeeper nonprivileged user with specified home dir
+add_user '${zookeeper.username_}' '${zookeeper.installfolder_}'
+

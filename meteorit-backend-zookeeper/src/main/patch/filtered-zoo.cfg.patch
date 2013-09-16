@@ -1,11 +1,11 @@
---- zoo_sample.cfg	2013-09-08 20:57:12.000000000 +0200
-+++ zoo.cfg	2013-09-08 20:54:04.000000000 +0200
+--- zoo_sample.cfg	2012-09-30 19:53:31.000000000 +0200
++++ zoo.cfg	2013-09-10 01:00:58.000000000 +0200
 @@ -9,7 +9,7 @@
  # the directory where the snapshot is stored.
  # do not use /tmp for storage, /tmp here is just 
  # example sakes.
 -dataDir=/tmp/zookeeper
-+dataDir=${zookeeper.installfolder_}/var
++dataDir=${zookeeper.datafolder_}
  # the port at which the clients will connect
  clientPort=2181
  #
@@ -18,4 +18,3 @@
  # Purge task interval in hours
  # Set to "0" to disable auto purge feature
 -#autopurge.purgeInterval=1
-+autopurge.purgeInterval=1

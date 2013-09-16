@@ -31,6 +31,14 @@
 	    		<targetPath>${project.build.outputDirectory}</targetPath>
 	    		<filtering>true</filtering>
 	    	</resource>
+	    	<resource>
+	    	  	<directory>${basedir}/src/main/patch</directory>
+	    	  	<includes>
+	    	  		<include>filtered-*.patch</include>
+	    	  	</includes>
+	    		<targetPath>${project.build.outputDirectory}</targetPath>
+	    		<filtering>true</filtering>
+	    	</resource>
 	    </resources>
 		<plugins>	
 			<plugin>

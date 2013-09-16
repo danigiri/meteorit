@@ -52,3 +52,4 @@ echo '************************************'
 echo 'Installed development stuff.'
 
 # mvn package && find target/ -name '*.rpm' -exec rpm -qpvvl '{}' \; -print
+# find target -name '*.rpm' -exec sudo yum localinstall --disablerepo=\* '{}' \;
