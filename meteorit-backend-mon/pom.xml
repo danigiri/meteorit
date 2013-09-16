@@ -99,7 +99,9 @@
 							<directory>${mon.installfolder_}/bin</directory>
 							<directoryIncluded>true</directoryIncluded>
 						</mapping>
-						
+						<mapping>	<!-- log folder, FIXME: this should be rolled -->
+							<directory>/var/log/mon</directory>
+						</mapping>						
                     </mappings>
 
 			    </configuration>
