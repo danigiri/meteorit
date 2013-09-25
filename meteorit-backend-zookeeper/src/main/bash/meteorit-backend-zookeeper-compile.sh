@@ -1,10 +1,10 @@
 #!/bin/bash
 
 cd '${zookeeper.sourcefolder_}/src/c'
-#if [ -e cli_mt ]; then
-#	echo 'Zookeeper binary clients already built, skipping'
-#	exit 0
-#fi
+if [ -e cli_mt ]; then
+	echo 'Zookeeper binary clients already built, skipping'
+	exit 0
+fi
 
 echo 'Starting zookeeper clients build...'
 
@@ -33,6 +33,6 @@ if [ $ERR_ -ne 0 ]; then
 	exit $ERR_
 fi
 
-DESTDIR='${zookeeper.tempfolder_}' make install | pv -f -l -p -s 29 >> ./make.output
+DESTDIR='${zookeeper.tempfolder_}' make install | pv -f -l -p -s 29 > ./make.output
 
 echo 'Completed'

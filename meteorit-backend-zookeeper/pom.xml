@@ -116,7 +116,7 @@
                     	
                     <mappings>
                                         	
-						<!-- 'zookeeper' mappings: binaries -->
+						<!-- 'zookeeper' mappings: shell scripts and binaries -->
 						<mapping>
 							<sources>
 								<source>
@@ -126,11 +126,7 @@
 									</includes>
 								</source>
 								<source>
-									<location>${zookeeper.sourcefolder_}/src/c</location>
-									<includes>
-										<include>cli_mt</include>
-										<include>cli_st</include>
-									</includes>
+									<location>${zookeeper.tempfolder_}/${zookeeper.installfolder_}/bin</location>
 								</source>
 							</sources>
 							<directory>${zookeeper.installfolder_}/bin</directory>
@@ -139,13 +135,56 @@
 							<groupname>${zookeeper.groupname_}</groupname>
 							<filemode>755</filemode>
 						</mapping>
-						<mapping>
+						<mapping>	<!-- includes -->
+							<sources>
+								<source>
+									<location>${zookeeper.tempfolder_}/${zookeeper.installfolder_}/include</location>
+								</source>
+							</sources>
+							<directory>${zookeeper.installfolder_}/include</directory>
+							<directoryIncluded>true</directoryIncluded>
+							<recurseDirectories>false</recurseDirectories>							
+						</mapping>
+						<mapping>		<!-- binary libs -->
+							<directory>${zookeeper.installfolder_}/lib</directory>
+						</mapping>
+						<mapping>	
+                    		<sources>
+                    			<source>
+                    				<location>${zookeeper.tempfolder_}/${zookeeper.installfolder_}/lib</location>
+                    				<includes>
+	                    				<include>*.a</include>
+    	                				<include>*.la</include>
+    	                				<include>*.so.2.0.0</include>
+   	                				</includes>
+                    			</source>
+                    			<softlinkSource>
+                    				<destination>libzookeeper_mt.so</destination>
+                    				<location>libzookeeper_mt.so.2.0.0</location>
+                    			</softlinkSource>
+                    			<softlinkSource>
+                    				<destination>libzookeeper_mt.so.2</destination>
+                    				<location>libzookeeper_mt.so.2.0.0</location>
+                    			</softlinkSource>
+                    			<softlinkSource>
+                    				<destination>libzookeeper_st.so</destination>
+                    				<location>libzookeeper_st.so.2.0.0</location>
+                    			</softlinkSource>
+                    			<softlinkSource>
+                    				<destination>libzookeeper_st.so.2</destination>
+                    				<location>libzookeeper_st.so.2.0.0</location>
+                    			</softlinkSource>
+                    		</sources>
+ 	                        <username>${lua.username_}</username>
+                            <groupname>${lua.groupname_}</groupname>  
+                            <filemode>755</filemode>
+                       		<directory>${zookeeper.installfolder_}/lib</directory>
+                       		<directoryIncluded>false</directoryIncluded>
+                       	</mapping>
+						<mapping>	<!-- java libs -->
 							<sources>
 								<source>
 									<location>${zookeeper.sourcefolder_}/lib</location>
-								</source>
-								<source>
-									<location>${zookeeper.sourcefolder_}/src/c</location>
 								</source>
 							</sources>
 							<directory>${zookeeper.installfolder_}/lib</directory>
@@ -199,7 +238,27 @@
                        		<directory>/etc/init.d</directory>  		
                        		<directoryIncluded>false</directoryIncluded>
                     	</mapping>	
-						
+						<mapping>
+							<sources>
+                    			<source>
+                    				<location>${project.build.directory}/LICENSE</location>
+                    			</source>
+                    		</sources>
+							<directory>${zookeeper.installfolder_}</directory>
+							<directoryIncluded>false</directoryIncluded>
+						</mapping>
+						<mapping>
+							<sources>
+                    			<source>
+                    				<location>${project.build.directory}/${project.artifactId}-installtest.sh</location>
+                    			</source>
+                    		</sources>
+   	                        <username>${zookeeper.username_}</username>
+                            <groupname>${zookeeper.groupname_}</groupname>  
+                            <filemode>755</filemode>                  		
+							<directory>${zookeeper.installfolder_}/test</directory>
+							<directoryIncluded>true</directoryIncluded>
+						</mapping>
                     </mappings>
 					<preinstallScriptlet>
 						<scriptFile>${project.build.directory}/preinstall.sh</scriptFile>
@@ -233,7 +292,7 @@
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
 			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
-			<comments>ZookKeeper credits (http://zookeeper.apache.org/credits.html)</comments>
+			<comments>ZooKeeper credits (http://zookeeper.apache.org/credits.html)</comments>
 		</license>
 	</licenses>	
 		    
@@ -256,21 +315,21 @@ drwxr-xr-x. 1 meteorit meteorit 272 Sep 17 00:29 zookeeper
 
 TMPE/opt/zookeeper/include/zookeeper:
 total 50
--rw-r--r--. 1 meteorit meteorit  1361 Sep 17 00:29 proto.h
--rw-r--r--. 1 meteorit meteorit  3036 Sep 17 00:29 recordio.h
--rw-r--r--. 1 meteorit meteorit 72681 Sep 17 00:29 zookeeper.h
--rw-r--r--. 1 meteorit meteorit 19977 Sep 17 00:29 zookeeper.jute.h
--rw-r--r--. 1 meteorit meteorit  1747 Sep 17 00:29 zookeeper_log.h
--rw-r--r--. 1 meteorit meteorit  1054 Sep 17 00:29 zookeeper_version.h
+-rw-rr. 1 meteorit meteorit  1361 Sep 17 00:29 proto.h
+-rw-rr. 1 meteorit meteorit  3036 Sep 17 00:29 recordio.h
+-rw-rr. 1 meteorit meteorit 72681 Sep 17 00:29 zookeeper.h
+-rw-rr. 1 meteorit meteorit 19977 Sep 17 00:29 zookeeper.jute.h
+-rw-rr. 1 meteorit meteorit  1747 Sep 17 00:29 zookeeper_log.h
+-rw-rr. 1 meteorit meteorit  1054 Sep 17 00:29 zookeeper_version.h
 
 TMPE/opt/zookeeper/lib:
 total 901
--rw-r--r--. 1 meteorit meteorit 574736 Sep 17 00:29 libzookeeper_mt.a
+-rw-rr. 1 meteorit meteorit 574736 Sep 17 00:29 libzookeeper_mt.a
 -rwxr-xr-x. 1 meteorit meteorit    994 Sep 17 00:29 libzookeeper_mt.la
 lrwxr-xr-x. 1 meteorit meteorit     24 Sep 17 00:29 libzookeeper_mt.so -> libzookeeper_mt.so.2.0.0
 lrwxr-xr-x. 1 meteorit meteorit     24 Sep 17 00:29 libzookeeper_mt.so.2 -> libzookeeper_mt.so.2.0.0
 -rwxr-xr-x. 1 meteorit meteorit 365087 Sep 17 00:29 libzookeeper_mt.so.2.0.0
--rw-r--r--. 1 meteorit meteorit 545842 Sep 17 00:29 libzookeeper_st.a
+-rw-rr. 1 meteorit meteorit 545842 Sep 17 00:29 libzookeeper_st.a
 -rwxr-xr-x. 1 meteorit meteorit    984 Sep 17 00:29 libzookeeper_st.la
 lrwxr-xr-x. 1 meteorit meteorit     24 Sep 17 00:29 libzookeeper_st.so -> libzookeeper_st.so.2.0.0
 lrwxr-xr-x. 1 meteorit meteorit     24 Sep 17 00:29 libzookeeper_st.so.2 -> libzookeeper_st.so.2.0.0
