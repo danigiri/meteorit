@@ -24,7 +24,11 @@ if [ $? != 0 ]; then
 fi
 rpm -Uvh epel-release-6*.rpm
 
-yum install -q -y java-1.6.0-openjdk pcre zlib
+yum install -q -y java-1.6.0-openjdk pcre zlib 
+
+# storm deps
+yum install -q -y unzip libuuid libuuid-devel
+
 
 # enable port 80
 # rulepos=`/sbin/service iptables status | grep -P '\d+.*ACCEPT' | tail -1 | awk '{print $1}'`

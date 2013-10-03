@@ -1,0 +1,234 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.calidos.dani.meteorit</groupId>
+	<artifactId>meteorit-backend-storm</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>rpm</packaging>
+
+	<name>Meteorit system backend storm component</name>
+	<description>Downloads Storm and runs it under 'mon' supervisor
+	</description>
+    <inceptionYear>2013</inceptionYear>
+    <url>http://dani.calidos.com</url>
+    
+    <parent>
+    	<groupId>com.calidos.dani.meteorit</groupId>
+		<artifactId>meteorit-compile-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+    </parent>
+    
+    <properties>
+		<storm.version_>0.9.0-rc2</storm.version_>
+		<storm.url_>https://dl.dropboxusercontent.com/s/p5wf0hsdab5n9kn/storm-${storm.version_}.zip</storm.url_>
+		<storm.sourcefolder_>${project.build.directory}/storm-${storm.version_}</storm.sourcefolder_>
+		<storm.installfolder_>${install.prefix_}/storm</storm.installfolder_>
+		<storm.configfolder_>/etc</storm.configfolder_>
+		<storm.datafolder_>/var/storm</storm.datafolder_>
+		<storm.logfolder_>/var/log/storm</storm.logfolder_>
+		<storm.username_>storm</storm.username_>
+		<storm.groupname_>storm</storm.groupname_>
+		<jzmq.version_>master</jzmq.version_>
+		<jzmq.url_>https://github.com/nathanmarz/jzmq/archive/${jzmq.version_}.zip</jzmq.url_>
+		<jzmq.sourcefolder_>${project.build.directory}/jzmq-${jzmq.version_}</jzmq.sourcefolder_>
+		<!--TODO: can we relocate this? -->
+		<jzmq.installfolder_>/usr/local</jzmq.installfolder_>
+		<jzmq.tempfolder_>${project.build.directory}/jzmq-install</jzmq.tempfolder_>
+    </properties>
+    
+    <build>
+    	<resources>
+    		<resource>
+    			<directory>src/main/resources</directory>
+    			<filtering>true</filtering>
+    		</resource>
+    	</resources>
+    
+    
+   		<plugins>
+
+            <plugin>	<!-- Download and expand whatever is needed -->
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                    	<id>download-storm-and-jzmq</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <get src="${storm.url_}" 
+                                	 dest="${project.build.directory}/storm-${storm.version_}.zip" skipexisting="true" />
+                                <unzip src="${project.build.directory}/storm-${storm.version_}.zip" 
+                                	   dest="${project.build.directory}" />
+                                <get src="${jzmq.url_}" 
+                                	 dest="${project.build.directory}/jzmq-${jzmq.version_}.zip" skipexisting="true" />
+                                <unzip src="${project.build.directory}/jzmq-${jzmq.version_}.zip" 
+                                	   dest="${project.build.directory}" />
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                    	<id>create-yaml-configuration</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                            <concat 
+                            	overwrite="yes"
+                            	encoding="${project.build.sourceEncoding}"
+                            	destfile="${project.build.directory}/storm.yaml">
+                            		<fileset file="${storm.sourcefolder_}/conf/storm.yaml" />
+                            		<fileset dir="src/main/resources/conf" includes="*.yaml" />
+                           	</concat>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+		    </plugin>
+		    	
+		    <plugin>	<!-- package as rpm, yay -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <version>2.1-alpha-2</version>
+                <extensions>true</extensions>
+
+                <configuration>
+                    <packager>danigiri</packager>
+                    <distribution>Calidos</distribution>
+                    <group>Calidos/Meteorit</group>
+                    <copyright>See installed LICENSE file</copyright>
+                    <summary>${project.name}</summary>
+                    <description>${project.description}</description>
+                    <url>${project.url}</url>
+                    <prefix>${install.prefix_}</prefix>
+                    <needarch>${binary.architecture_}</needarch>
+
+	    			<icon />
+
+                    <defineStatements>
+                        <defineStatement>_unpackaged_files_terminate_build 0</defineStatement>
+                        <defineStatement>_name ${project.artifactId}</defineStatement>
+                        <defineStatement>_app ${project.artifactId}</defineStatement>
+                    </defineStatements>
+
+                    <defaultDirmode>755</defaultDirmode>
+                    <defaultFilemode>644</defaultFilemode>
+                    <defaultUsername>${storm.username_}</defaultUsername>
+                    <defaultGroupname>${storm.groupname_}</defaultGroupname>
+                               
+                    <requires>
+                    	<require>shunit2 &gt;= 2.1.6</require>      
+                    	<require>meteorit-env</require>
+                    	<require>meteorit-backend-mon</require>
+                    	<require>meteorit-backend-zookeeper</require>
+                    	<require>zeromq</require>
+                    </requires>
+                    	
+                    <mappings>
+                    	<!-- storm installation -->
+ 						<mapping>	
+							<directory>${storm.installfolder_}</directory>
+ 						</mapping>
+						<!-- storm script -->
+ 						<mapping>	
+							<sources>
+								<source>
+									<location>${storm.sourcefolder_}/bin/storm</location>
+								</source>
+							</sources>
+							<directory>${storm.installfolder_}/bin</directory>
+						    <username>${storm.username_}</username>
+                            <groupname>${storm.groupname_}</groupname>  
+                            <filemode>755</filemode>
+							<directoryIncluded>true</directoryIncluded>
+						</mapping>
+						
+                   		<mapping>
+							<sources>
+								<source>
+									<location>${storm.sourcefolder_}/lib</location>
+								</source>
+							</sources>
+							<directory>${storm.installfolder_}/lib</directory>
+							<directoryIncluded>true</directoryIncluded>
+						</mapping>
+
+						<mapping>	<!-- final configuration yaml -->
+							<sources>
+								<source>
+									<location>${project.build.directory}/storm.yaml</location>
+								</source>
+							</sources>
+							<directory>/etc</directory>
+						    <username>root</username>
+                            <groupname>root</groupname>  
+                            <filemode>644</filemode>
+							<directoryIncluded>false</directoryIncluded>
+						</mapping>
+						<mapping>	<!-- storm: local temporary folder -->
+							<directory>${storm.datafolder_}</directory>
+						    <username>root</username>
+                            <groupname>${storm.groupname_}</groupname>  
+                            <filemode>775</filemode>
+						</mapping>
+						<mapping>	<!-- jzmq binary libs -->
+                    		<sources>
+                    			<source>
+                    				<location>${jzmq.tempfolder_}/${jzmq.installfolder_}/lib</location>
+                    				<includes>
+	                    				<include>*.a</include>
+    	                				<include>*.la</include>
+    	                				<include>*.so.0.0.0</include>
+   	                				</includes>
+                    			</source>
+                    			<softlinkSource>
+                    				<destination>libjzmq.so</destination>
+                    				<location>libjzmq.so.0.0.0</location>
+                    			</softlinkSource>
+                    			<softlinkSource>
+                    				<destination>libjzmq.so.0</destination>
+                    				<location>libjzmq.so.0.0.0</location>
+                    			</softlinkSource>
+                    		</sources>
+ 	                        <username>root</username>
+                            <groupname>root</groupname>  
+                            <filemode>755</filemode>
+                       		<directory>${jzmq.installfolder_}/lib</directory>
+                       		<directoryIncluded>false</directoryIncluded>
+                       	</mapping>
+                       	<mapping>	<!-- jzmq java libs -->
+							<sources>
+								<source>
+									<location>${jzmq.tempfolder_}/${jzmq.installfolder_}/share/java</location>
+								</source>
+							</sources>
+							<directory>${jzmq.installfolder_}/usr/share/java</directory>
+							<directoryIncluded>false</directoryIncluded>
+						</mapping>
+		    	    </mappings>
+		    	    
+		    	    </configuration>
+	    	    </plugin>
+	    </plugins>
+		    
+    </build>
+    
+    <!-- 
+
+./usr/local/lib:
+total 311
+-rw-r__r__. 1 meteorit meteorit 435126 Sep 27 00:19 libjzmq.a
+-rwxr-xr-x. 1 meteorit meteorit    937 Sep 27 00:19 libjzmq.la
+lrwxr-xr-x. 1 meteorit meteorit     16 Sep 27 00:19 libjzmq.so -> libjzmq.so.0.0.0
+lrwxr-xr-x. 1 meteorit meteorit     16 Sep 27 00:19 libjzmq.so.0 -> libjzmq.so.0.0.0
+-rwxr-xr-x. 1 meteorit meteorit 197164 Sep 27 00:19 libjzmq.so.0.0.0
+
+./usr/local/share/java:
+total 7
+-rw-r__r__. 1 meteorit meteorit 13642 Sep 27 00:19 zmq.jar
+     -->
+</project>

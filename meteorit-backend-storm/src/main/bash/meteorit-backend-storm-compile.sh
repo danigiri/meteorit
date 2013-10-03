@@ -14,16 +14,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-cd '${zookeeper.sourcefolder_}/src/c'
-if [ -e cli_mt ]; then
-	echo 'Zookeeper binary clients already built, skipping'
+cd '${jzmq.sourcefolder_}'
+if [ -e src/zmq.jar ]; then
+	echo 'jzmq already built, skipping'
 	exit 0
 fi
 
-echo 'Starting zookeeper clients build...'
+echo 'Starting jzmq build...'
+
 
 echo 'Configuring (1/2):'
-autoreconf -if | pv -f -l -p -s 5 > ./autoreconf.output
+chmod a+x -v autogen.sh
+./autogen.sh | pv -f -l -p -s 24 > ./autogen.output
 ERR_=$?
 if [ $ERR_ -ne 0 ]; then
 	echo "Error configuring (1/2), checkout 'autoreconf.output'"
@@ -32,21 +34,23 @@ fi
 
 echo 'Configuring (2/2):'
 chmod a+x -v ./configure
-./configure --prefix='${zookeeper.installfolder_}'\
-	| pv -f -l -p -s 159 > ./configure.output
+# can't seem to locate the jni.h otherwise
+JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64 ./configure --with-zeromq=/usr \
+	| pv -f -l -p -s 103 > ./configure.output
 ERR_=$?
 if [ $ERR_ -ne 0 ]; then
 	echo "Error configuring (2/2), checkout 'configure.output'"
 	exit $ERR_
 fi
 
-make | pv -f -l -p -s 116 > ./make.output
+
+make | pv -f -l -p -s 56 > ./make.output
 ERR_=$?
 if [ $ERR_ -ne 0 ]; then
 	echo "Error running make, checkout 'make.output'"
 	exit $ERR_
 fi
 
-DESTDIR='${zookeeper.tempfolder_}' make install | pv -f -l -p -s 29 > ./make.output
+DESTDIR='${jzmq.tempfolder_}' make install | pv -f -l -p -s 36 >> ./make.output
 
 echo 'Completed'

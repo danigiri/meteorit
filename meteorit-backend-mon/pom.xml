@@ -55,7 +55,7 @@
                 <extensions>true</extensions>
 
                 <configuration>
-                    <packager>dani</packager>
+                    <packager>danigiri</packager>
                     <distribution>Calidos</distribution>
                     <group>Calidos/Meteorit</group>
                     <copyright>See installed LICENSE file</copyright>

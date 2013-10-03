@@ -12,7 +12,7 @@ echo 'Installing development stuff...'
 
 yum install -q -y wget
 
-yum install -q -y gcc make pcre-devel zlib-devel autoconf automake libtool cppunit-devel
+yum install -q -y gcc gcc-c++ make pcre-devel zlib-devel autoconf automake libtool cppunit-devel
 yum install -q -y rpm-build man shunit2 pv
 
 yum install -q -y java-1.6.0-openjdk
