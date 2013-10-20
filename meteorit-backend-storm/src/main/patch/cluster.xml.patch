@@ -1,0 +1,35 @@
+--- cluster.xml	2013-09-27 12:32:30.000000000 +0200
++++ cluster.xml	2013-10-06 17:35:33.000000000 +0200
+@@ -2,9 +2,9 @@
+ 
+ <configuration scan="true" scanPeriod="60 seconds">
+  <appender name="A1" class="ch.qos.logback.core.rolling.RollingFileAppender">
+-    <file>${storm.home}/logs/${logfile.name}</file>
++    <file>${storm.logfolder_}/${logfile.name}</file>
+     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+-      <fileNamePattern>${storm.home}/logs/${logfile.name}.%i</fileNamePattern>
++      <fileNamePattern>${storm.logfolder_}/${logfile.name}.%i</fileNamePattern>
+       <minIndex>1</minIndex>
+       <maxIndex>9</maxIndex>
+     </rollingPolicy>
+@@ -19,9 +19,9 @@
+  </appender>
+ 
+  <appender name="ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+-    <file>${storm.home}/logs/access.log</file>
++    <file>${storm.logfolder_}/access.log</file>
+     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+-      <fileNamePattern>${storm.home}/logs/access.log.%i</fileNamePattern>
++      <fileNamePattern>${storm.logfolder_}/access.log.%i</fileNamePattern>
+       <minIndex>1</minIndex>
+       <maxIndex>9</maxIndex>
+     </rollingPolicy>
+@@ -36,7 +36,7 @@
+   </appender>
+ 
+   <appender name="METRICS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+-    <file>${storm.home}/logs/metrics.log</file>
++    <file>${storm.logfolder_}/metrics.log</file>
+     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+       <fileNamePattern>metrics.log.%i</fileNamePattern>
+       <minIndex>1</minIndex>

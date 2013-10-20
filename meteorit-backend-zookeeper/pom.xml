@@ -15,6 +15,7 @@
     	<groupId>com.calidos.dani.meteorit</groupId>
 		<artifactId>meteorit-compile-parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../meteorit-compile-parent/pom.xml</relativePath>
     </parent>
     
     <properties>
@@ -264,14 +265,6 @@
 						<scriptFile>${project.build.directory}/preinstall.sh</scriptFile>
 						<fileEncoding>utf-8</fileEncoding>
 					</preinstallScriptlet>                    
-					<postinstallScriptlet>
-						<scriptFile>${project.build.directory}/postinstall.sh</scriptFile>
-						<fileEncoding>utf-8</fileEncoding>
-					</postinstallScriptlet>                    
-					<preremoveScriptlet>
-						<scriptFile>${project.build.directory}/preremove.sh</scriptFile>
-						<fileEncoding>utf-8</fileEncoding>
-					</preremoveScriptlet>                    
 					<postremoveScriptlet>
 						<scriptFile>${project.build.directory}/postremove.sh</scriptFile>
 						<fileEncoding>utf-8</fileEncoding>

@@ -15,6 +15,7 @@
     	<groupId>com.calidos.dani.meteorit</groupId>
 		<artifactId>meteorit-compile-parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../meteorit-compile-parent/pom.xml</relativePath>
     </parent>
     
     <properties>
@@ -30,15 +31,20 @@
 		<jzmq.version_>master</jzmq.version_>
 		<jzmq.url_>https://github.com/nathanmarz/jzmq/archive/${jzmq.version_}.zip</jzmq.url_>
 		<jzmq.sourcefolder_>${project.build.directory}/jzmq-${jzmq.version_}</jzmq.sourcefolder_>
-		<!--TODO: can we relocate this? -->
+		<!--TODO: this can be relocated provided the yaml file config reflects the new path -->
 		<jzmq.installfolder_>/usr/local</jzmq.installfolder_>
 		<jzmq.tempfolder_>${project.build.directory}/jzmq-install</jzmq.tempfolder_>
+		<skipPatch_>false</skipPatch_>	<!-- to skip reapplying logback config patch -->
     </properties>
     
     <build>
     	<resources>
     		<resource>
     			<directory>src/main/resources</directory>
+    			<filtering>true</filtering>
+    		</resource>
+    		<resource>
+    			<directory>src/main/patch</directory>
     			<filtering>true</filtering>
     		</resource>
     	</resources>
@@ -89,6 +95,29 @@
                     </execution>
                 </executions>
 		    </plugin>
+		    
+		    <plugin>	<!-- global nginx configuration patch (diff -u cluster.xml cluster2.xml) -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-patch-plugin</artifactId>
+				<version>1.1.1</version>
+				<configuration>
+					<backups>false</backups>
+					<targetDirectory>${storm.sourcefolder_}/logback</targetDirectory>
+					<patchFile>${project.build.outputDirectory}/cluster.xml.patch</patchFile>
+					<destFile>${project.build.directory}/cluster.xml</destFile>
+					<skipApplication>${skipPatch_}</skipApplication>
+				</configuration>
+				<executions>
+					<execution>
+						<id>patch</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>apply</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		    
 		    	
 		    <plugin>	<!-- package as rpm, yay -->
                 <groupId>org.codehaus.mojo</groupId>
@@ -129,12 +158,10 @@
                     </requires>
                     	
                     <mappings>
-                    	<!-- storm installation -->
- 						<mapping>	
+ 						<mapping>	<!-- storm installation -->
 							<directory>${storm.installfolder_}</directory>
  						</mapping>
-						<!-- storm script -->
- 						<mapping>	
+ 						<mapping>	<!-- storm: script -->	
 							<sources>
 								<source>
 									<location>${storm.sourcefolder_}/bin/storm</location>
@@ -146,8 +173,7 @@
                             <filemode>755</filemode>
 							<directoryIncluded>true</directoryIncluded>
 						</mapping>
-						
-                   		<mapping>
+                   		<mapping>	<!-- storm: jars -->
 							<sources>
 								<source>
 									<location>${storm.sourcefolder_}/lib</location>
@@ -156,25 +182,46 @@
 							<directory>${storm.installfolder_}/lib</directory>
 							<directoryIncluded>true</directoryIncluded>
 						</mapping>
-
-						<mapping>	<!-- final configuration yaml -->
+						<mapping>	<!-- storm: final configuration yaml -->
 							<sources>
 								<source>
 									<location>${project.build.directory}/storm.yaml</location>
 								</source>
 							</sources>
-							<directory>/etc</directory>
+							<directory>${storm.configfolder_}</directory>
 						    <username>root</username>
                             <groupname>root</groupname>  
                             <filemode>644</filemode>
 							<directoryIncluded>false</directoryIncluded>
+							<configuration>noreplace</configuration>
 						</mapping>
+						<mapping>	<!-- storm: final logback configuration -->
+							<sources>
+								<source>
+									<location>${project.build.directory}/cluster.xml</location>
+								</source>
+							</sources>
+							<directory>${storm.installfolder_}/logback</directory>
+							<configuration>noreplace</configuration>
+						</mapping>						
 						<mapping>	<!-- storm: local temporary folder -->
 							<directory>${storm.datafolder_}</directory>
 						    <username>root</username>
                             <groupname>${storm.groupname_}</groupname>  
                             <filemode>775</filemode>
 						</mapping>
+						<mapping>	<!-- init.d scripts, as root -->
+                    		<sources>
+                    			<source>
+                    				<location>${project.build.outputDirectory}/init.d</location>
+                    			</source>
+                    		</sources>
+ 	                        <username>root</username>
+                            <groupname>root</groupname>  
+                            <filemode>755</filemode>                  		
+                       		<directory>/etc/init.d</directory>  		
+                       		<directoryIncluded>false</directoryIncluded>
+                    	</mapping>
 						<mapping>	<!-- jzmq binary libs -->
                     		<sources>
                     			<source>
@@ -210,7 +257,14 @@
 							<directoryIncluded>false</directoryIncluded>
 						</mapping>
 		    	    </mappings>
-		    	    
+		    	    <preinstallScriptlet>
+						<scriptFile>${project.build.directory}/preinstall.sh</scriptFile>
+						<fileEncoding>utf-8</fileEncoding>
+					</preinstallScriptlet>                    
+					<postremoveScriptlet>
+						<scriptFile>${project.build.directory}/postremove.sh</scriptFile>
+						<fileEncoding>utf-8</fileEncoding>
+					</postremoveScriptlet>
 		    	    </configuration>
 	    	    </plugin>
 	    </plugins>
