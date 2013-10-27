@@ -23,8 +23,9 @@
 		<storm.url_>https://dl.dropboxusercontent.com/s/p5wf0hsdab5n9kn/storm-${storm.version_}.zip</storm.url_>
 		<storm.sourcefolder_>${project.build.directory}/storm-${storm.version_}</storm.sourcefolder_>
 		<storm.installfolder_>${install.prefix_}/storm</storm.installfolder_>
-		<storm.configfolder_>/etc</storm.configfolder_>
 		<storm.datafolder_>/var/storm</storm.datafolder_>
+		<!--<storm.configfolder_>/etc</storm.configfolder_>-->
+		<storm.configfolder_>${storm.installfolder_}/conf</storm.configfolder_>
 		<storm.logfolder_>/var/log/storm</storm.logfolder_>
 		<storm.username_>storm</storm.username_>
 		<storm.groupname_>storm</storm.groupname_>
@@ -88,7 +89,7 @@
                             	encoding="${project.build.sourceEncoding}"
                             	destfile="${project.build.directory}/storm.yaml">
                             		<fileset file="${storm.sourcefolder_}/conf/storm.yaml" />
-                            		<fileset dir="src/main/resources/conf" includes="*.yaml" />
+                            		<fileset dir="${project.build.outputDirectory}/conf" includes="*.yaml" />
                            	</concat>
                             </target>
                         </configuration>
@@ -176,36 +177,81 @@
                    		<mapping>	<!-- storm: jars -->
 							<sources>
 								<source>
+									<location>${storm.sourcefolder_}</location>
+									<includes>
+										<include>*.jar</include>
+									</includes>
+								</source>
+							</sources>
+							<directory>${storm.installfolder_}</directory>
+							<directoryIncluded>true</directoryIncluded>
+						</mapping>
+                   		<mapping>	<!-- storm: dependency jars -->
+							<sources>
+								<source>
 									<location>${storm.sourcefolder_}/lib</location>
 								</source>
 							</sources>
 							<directory>${storm.installfolder_}/lib</directory>
 							<directoryIncluded>true</directoryIncluded>
 						</mapping>
+						<mapping>	<!-- storm: ui resources -->
+							<sources>
+								<source>
+									<location>${storm.sourcefolder_}/public</location>
+								</source>
+							</sources>
+							<directory>${storm.installfolder_}/public</directory>
+							<directoryIncluded>true</directoryIncluded>
+						</mapping>
+						<mapping>	<!-- storm: needed release flag file -->
+							<sources>
+								<source>
+									<location>${storm.sourcefolder_}/RELEASE</location>
+								</source>
+							</sources>
+							<directory>${storm.installfolder_}</directory>
+						</mapping>
 						<mapping>	<!-- storm: final configuration yaml -->
+							<directory>${storm.configfolder_}</directory>
+						</mapping>
+						<mapping>
 							<sources>
 								<source>
 									<location>${project.build.directory}/storm.yaml</location>
 								</source>
 							</sources>
 							<directory>${storm.configfolder_}</directory>
-						    <username>root</username>
-                            <groupname>root</groupname>  
-                            <filemode>644</filemode>
+						    <username>${storm.username_}</username>
+                            <groupname>${storm.groupname_}</groupname>  
+                            <filemode>664</filemode>
 							<directoryIncluded>false</directoryIncluded>
 							<configuration>noreplace</configuration>
 						</mapping>
 						<mapping>	<!-- storm: final logback configuration -->
+							<directory>${storm.installfolder_}/logback</directory>
+						</mapping>
+						<mapping>
 							<sources>
 								<source>
 									<location>${project.build.directory}/cluster.xml</location>
 								</source>
 							</sources>
+						    <username>${storm.username_}</username>
+                            <groupname>${storm.groupname_}</groupname>  
+                            <filemode>664</filemode>
 							<directory>${storm.installfolder_}/logback</directory>
 							<configuration>noreplace</configuration>
-						</mapping>						
+							<directoryIncluded>false</directoryIncluded>
+						</mapping>	
 						<mapping>	<!-- storm: local temporary folder -->
 							<directory>${storm.datafolder_}</directory>
+						    <username>root</username>
+                            <groupname>${storm.groupname_}</groupname>  
+                            <filemode>775</filemode>
+						</mapping>
+						<mapping>	<!-- storm: log folder -->
+							<directory>${storm.logfolder_}</directory>
 						    <username>root</username>
                             <groupname>${storm.groupname_}</groupname>  
                             <filemode>775</filemode>

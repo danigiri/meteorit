@@ -36,17 +36,21 @@ source /etc/rc.d/init.d/functions
 
 retval_=0
 mon_=${install.prefix_}/mon/bin/mon
-storm_=
 mon_log_='/var/log/mon/mon-storm-ui.log'
 pidfile_='/var/run/storm-ui.pid'
 monpid_='/var/run/mon-storm-ui.pid'
 desc_='Storm UI daemon'
 lockfile_='/var/lock/subsys/storm-ui'
-zookeeper_='${storm.installfolder_}/bin/storm ui --config ${storm.configfolder_}/storm.yaml'
+storm_ui_='/usr/bin/python ${storm.installfolder_}/bin/storm ui'
 
 start() {
  	echo -n $"Starting $desc_ (storm): "
-	$mon_ -l "$mon_log_" -s 1  -p "$pidfile_" -m "$monpid_" -d "su - '${storm.username_}' -m --session-command='sh $nimbus_'"
+	$mon_ -d \
+		-l "$mon_log_" \
+		-s 1  \
+		-p "$pidfile_" \
+		-m "$monpid_" \
+		"su - '${storm.username_}' -m --session-command='$storm_ui_'"
   	retval_=$?
   	[ $retval_ -eq 0 ] && success
   	[ $retval_ -ne 0 ] && failure

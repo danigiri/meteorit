@@ -37,3 +37,5 @@ yum install -q -y unzip libuuid libuuid-devel
 # /sbin/service iptables save
 # /sbin/service iptables restart
 
+# centos64.localdomain or whatever the name of the host is needs to resolve for logback
+# to work on storm worker nodes
