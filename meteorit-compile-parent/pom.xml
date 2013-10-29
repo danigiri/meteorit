@@ -27,6 +27,11 @@
 	    		<filtering>true</filtering>
 	    	</resource>
 	    	<resource>
+	    		<directory>${basedir}/src/test/bash</directory>
+	    		<targetPath>${project.build.directory}</targetPath>
+	    		<filtering>true</filtering>
+	    	</resource>
+	    	<resource>
 	    		<directory>${basedir}/src/main/resources</directory>
 	    		<targetPath>${project.build.outputDirectory}</targetPath>
 	    		<filtering>true</filtering>
@@ -39,36 +44,22 @@
 	    		<targetPath>${project.build.outputDirectory}</targetPath>
 	    		<filtering>true</filtering>
 	    	</resource>
+	    	<resource>
+	    	  	<directory>${basedir}/src/main/patch</directory>
+	    	  	<excludes>
+	    	  		<exclude>filtered-*.patch</exclude>
+	    	  	</excludes>
+	    		<targetPath>${project.build.outputDirectory}</targetPath>
+	    		<filtering>false</filtering>
+	    	</resource>
+			<resource>
+				<directory>${basedir}</directory>
+				<includes>
+					<include>LICENSE</include>
+				</includes>
+			</resource>
 	    </resources>
 		<plugins>	
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-					<execution>
-						<id>copy-compile-script</id>
-						<phase>process-sources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${basedir}/src/main/bash</directory>
-									<filtering>true</filtering>
-								</resource>
-								<resource>
-									<directory>${basedir}</directory>
-									<includes>
-										<include>LICENSE</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>	<!-- run compile script -->
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>

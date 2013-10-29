@@ -19,7 +19,7 @@
 . ${install.prefix_}/share/meteorit/meteorit-common.sh
 
 
-###############################################################################
+################################################################################
 print_usage_exit() {
 	printf "\t%s\n" "Meteorit storm configuration system\n" \
 		   "Usage:\t$0 [-h] [-z {host0 host1 ...} [-n [host]]\n" \
@@ -27,20 +27,58 @@ print_usage_exit() {
 		   "\t\t -n [host]: set nimbus node address (empty for localhost)\n" \
 		   "\t\t -h: provide help\n" \
 	exit 0
+}
 
+
+################################################################################
+add_yaml_property() {
+	# <file> <property name> {<value0> <value1> ... }
+
+ 	if [ "$#" -eq 0 ]; then
+ 		printf "No yaml config file passed\n" >&2
+ 		exit 1
+ 	fi
+ 
+ 	f_="$1"
+ 	shift
+ 	
+ 	if [ ! -e "$1" ]; then
+ 		printf "Can't find yaml config file ($f_)\n" >&2
+ 		exit 1
+ 	fi
+
+}
+
+################################################################################
+add_zookeeper_addresses() {
+ 	# $1 file {address address ...}
+ echo 'aa'
+
+  
 }
 
 
 zookeeper_=''
+nimbus_=''
 
-while getopts "hz" flag
+while getopts "hzn" flag
 do
   case $flag in
 	h) print_usage_exit ;;
 	z) zookeeper_='yes';;
+	n) nimbus_='yes';;
 	\?) echo "Invalid option: -$OPTARG (use -h for help)" >&2;;
   esac
 done
 shift $((OPTIND-1))
 
+if [[ "$zookeeper_" == 'yes' ]]; then
+	# configure storm zookeeper servers
+	a=a
+#if [ $#]
 
+elif [[ "$nimbus_" == 'yes' ]]; then
+	# specify nimbus address
+	a=a
+
+fi
