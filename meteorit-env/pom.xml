@@ -75,7 +75,7 @@
                     	<mapping>
 							<sources>
                     			<source>
-                    				<location>${project.build.directory}/LICENSE</location>
+                    				<location>${project.build.outputDirectory}/LICENSE</location>
                     			</source>
                     		</sources>
                     		<filemode>644</filemode>
