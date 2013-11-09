@@ -13,7 +13,8 @@ echo 'Installing development stuff...'
 grep -i debian /etc/*-release -q
 if [ $? -eq 0 ]; then
 
-	sudo apt-get -y install wget gcc autoconf automake libtool rpm
+	apt-get -y install wget gcc autoconf automake libtool rpm
+	gem install fpm
 
 else 
 	yum install -q -y wget
