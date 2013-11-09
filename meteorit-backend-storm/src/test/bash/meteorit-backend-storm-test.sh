@@ -36,15 +36,11 @@ EOF
 
 test_add_yaml_property() {
 
-set -x
+	$(add_yaml_property) 
+	assertEquals 'No parameter given should die' '1' "$?"
 
-	err_=$(add_yaml_property)
-	assertEquals 'No parameter given should die' "1" "$err_"
-
-	err_=$(add_yaml_property 'NONEXISTANTFILE')
-	assertEquals 'Nonexistant file should die' "1" "$err_"
-
-set +x
+	$(add_yaml_property 'NONEXISTANTFILE')
+	assertEquals 'Nonexistant file should die' '1' "$?"
 
 }
 

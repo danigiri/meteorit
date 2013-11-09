@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # setup and variables
-[ -z "$MAVEN_URL" ] && MAVEN_URL='http://ftp.cixug.es/apache/maven/maven-3/3.1.0/binaries/apache-maven-3.1.0-bin.tar.gz'
-[ -z "$MAVEN_FILE" ] && MAVEN_FILE='apache-maven.tar.gz'
+[ -z "$MAVEN_URL" ] && MAVEN_URL='http://ftp.cixug.es/apache/maven/maven-3/3.1.1/binaries/apache-maven-3.1.1-bin.tar.gz'
+[ -z "$MAVEN_FILE" ] && MAVEN_FILE='apache-maven.tar.gz'
 [ -z "$PREFIX" ] && PREFIX='/opt'
 
 MAVEN_INSTALL_FOLDER_="$PREFIX/apache-maven"
@@ -10,17 +10,24 @@ MAVEN_INSTALL_FOLDER_="$PREFIX/apache-maven"
 
 echo 'Installing development stuff...'
 
-yum install -q -y wget
+grep -i debian /etc/*-release -q
+if [ $? -eq 0 ]; then
 
-yum install -q -y gcc gcc-c++ make pcre-devel zlib-devel autoconf automake libtool cppunit-devel
-yum install -q -y rpm-build man shunit2 pv
+	sudo apt-get -y install wget gcc autoconf automake libtool rpm
 
-yum install -q -y java-1.6.0-openjdk
+else 
+	yum install -q -y wget
 
+	yum install -q -y gcc gcc-c++ make pcre-devel zlib-devel autoconf automake libtool cppunit-devel
+	yum install -q -y rpm-build man shunit2 pv
+
+	yum install -q -y java-1.6.0-openjdk
+
+fi
 echo 'Installing maven...'
 
 wget -q "$MAVEN_URL" -O "$MAVEN_FILE"
-if [ $? -ne 0 ]; then
+if [ $? -ne 0 ]; then
 	echo "Could not get maven ($?)"
 	exit 1
 fi
