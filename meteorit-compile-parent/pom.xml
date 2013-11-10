@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.calidos.dani.meteorit</groupId>
 	<artifactId>meteorit-compile-parent</artifactId>
@@ -14,7 +16,7 @@
     <properties>
     	<compile.script_>./${project.artifactId}-compile.sh</compile.script_>
     	<test.script_>./${project.artifactId}-test.sh</test.script_>
-    	<binary.architecture_>x86_64</binary.architecture_>
+    	<binary.architecture_>true</binary.architecture_>
     	<install.prefix_>/opt</install.prefix_>
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>    	
     </properties>
@@ -32,7 +34,7 @@
 	    		<filtering>true</filtering>
 	    	</resource>
 	    	<resource>
-	    		<directory>${basedir}/src/test/r</directory>
+	    		<directory>${basedir}/src/test/resources</directory>
 	    		<targetPath>${project.build.directory}</targetPath>
 	    		<filtering>true</filtering>
 	    	</resource>

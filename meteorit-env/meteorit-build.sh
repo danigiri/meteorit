@@ -18,6 +18,7 @@ if [ $? -eq 0 ]; then
 	# rpm to .deb
 	apt-get -y install ruby-dev
 	gem install fpm
+	apt-get -y install alien
 
 else 
 	yum install -q -y wget
