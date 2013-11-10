@@ -66,6 +66,18 @@
 				</configuration>
 				<executions>
 					<execution>
+						<id>patch-zookeeper-mt_adaptor</id>
+						<phase>process-resources</phase>	<!-- process-resources phase: otherwise patch file is not resource-copied -->
+						<goals>
+							<goal>apply</goal>
+						</goals>
+						<configuration>				
+							<patchFile>${project.build.outputDirectory}/mt_adaptor.c.patch</patchFile>
+							<targetDirectory>${zookeeper.sourcefolder_}/src/c/src</targetDirectory>
+							<originalFile>${zookeeper.sourcefolder_}/src/c/src/mt_adaptor.c</originalFile>
+						</configuration>
+					</execution>
+					<execution>
 						<id>patch-zookeeper-config</id>
 						<phase>process-classes</phase>
 						<goals>
@@ -76,18 +88,6 @@
 							<targetDirectory>${zookeeper.sourcefolder_}/conf</targetDirectory>
 							<originalFile>${zookeeper.sourcefolder_}/conf/zoo_sample.cfg</originalFile>
 							<destFile>${project.build.outputDirectory}/conf/zoo.cfg</destFile>			
-						</configuration>
-					</execution>
-					<execution>
-						<id>patch-zookeeper-mt_adaptor</id>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>apply</goal>
-						</goals>
-						<configuration>				
-							<patchFile>${project.build.outputDirectory}/mt_adaptor.c.patch</patchFile>
-							<targetDirectory>${zookeeper.sourcefolder_}/src/c/src</targetDirectory>
-							<originalFile>${zookeeper.sourcefolder_}/src/c/src/mt_adaptor.c</originalFile>
 						</configuration>
 					</execution>
 				</executions>
@@ -248,7 +248,7 @@
 						<mapping>
 							<sources>
                     			<source>
-                    				<location>${project.build.directory}/LICENSE</location>
+                    				<location>${project.build.outputDirectory}/LICENSE</location>
                     			</source>
                     		</sources>
 							<directory>${zookeeper.installfolder_}</directory>
