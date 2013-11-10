@@ -36,6 +36,9 @@ test_add_yaml_property_failures() {
 	$(add_yaml_property 'NONEXISTANTFILE')
 	assertEquals 'Nonexistant file should die' '1' "$?"
 
+	$(add_yaml_property "$yaml_")
+	assertEquals 'No propert added should die' '1' "$?"
+
 }
 
 

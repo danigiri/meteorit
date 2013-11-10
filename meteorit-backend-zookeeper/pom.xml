@@ -88,7 +88,6 @@
 							<patchFile>${project.build.outputDirectory}/mt_adaptor.c.patch</patchFile>
 							<targetDirectory>${zookeeper.sourcefolder_}/src/c/src</targetDirectory>
 							<originalFile>${zookeeper.sourcefolder_}/src/c/src/mt_adaptor.c</originalFile>
-							<destFile>${project.build.outputDirectory}/src/c/src/mt_adaptor.c</destFile>			
 						</configuration>
 					</execution>
 				</executions>
@@ -214,14 +213,6 @@
 							</sources>
 							<directory>${zookeeper.installfolder_}</directory>
 						</mapping>
-						<mapping>	<!-- java deps -->
-							<sources>
-								<source>
-									<location>${zookeeper.sourcefolder_}/lib</location>
-								</source>
-							</sources>
-							<directory>${zookeeper.installfolder_}/lib</directory>
-						</mapping>
 						<mapping>	<!-- configuration -->
 							<sources>
 								<source>
@@ -345,4 +336,9 @@ lrwxr-xr-x. 1 meteorit meteorit     24 Sep 17 00:29 libzookeeper_st.so.2 -> libz
  -->
 		    
 </project>
+
+
+
+
+
 		    
