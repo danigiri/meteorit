@@ -32,6 +32,11 @@
 	    		<filtering>true</filtering>
 	    	</resource>
 	    	<resource>
+	    		<directory>${basedir}/src/test/r</directory>
+	    		<targetPath>${project.build.directory}</targetPath>
+	    		<filtering>true</filtering>
+	    	</resource>
+	    	<resource>
 	    		<directory>${basedir}/src/main/resources</directory>
 	    		<targetPath>${project.build.outputDirectory}</targetPath>
 	    		<filtering>true</filtering>

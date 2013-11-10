@@ -46,6 +46,8 @@ add_yaml_property() {
  		printf "Can't find yaml config file ($f_)\n" >&2
  		exit 1
  	fi
+ 	
+ 	
 
 }
 

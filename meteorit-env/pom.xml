@@ -6,7 +6,7 @@
 	<packaging>rpm</packaging>
 
 	<name>Meteorit system shell utils and environment</name>
-	<description>Downloads lua JIT and compiles it onto a RPM
+	<description>Includes all shared scripts between
 	</description>
     <inceptionYear>2013</inceptionYear>
     <url>http://dani.calidos.com</url>
@@ -20,6 +20,7 @@
     
     <properties>
 	    <env.installfolder_>${install.prefix_}/share/meteorit</env.installfolder_>
+	    <binary.architecture_>noarch</binary.architecture_>
     </properties>
     
     <build>

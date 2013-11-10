@@ -1,0 +1,10 @@
+# test yml
+atribute.text: "foo"
+atribute.int: 12345
+# comment line
+test.list:
+	- 1
+	- 2
+	- 3
+	- 4
+

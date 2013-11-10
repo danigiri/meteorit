@@ -14,6 +14,9 @@ grep -i debian /etc/*-release -q
 if [ $? -eq 0 ]; then
 
 	apt-get -y install wget gcc autoconf automake libtool rpm
+	
+	# rpm to .deb
+	apt-get -y install ruby-dev
 	gem install fpm
 
 else 
