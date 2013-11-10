@@ -25,21 +25,15 @@ oneTimeSetUp() {
 
 
 setUp() {
-	cat <<-EOF > "$yaml_"
-	property0: valuea
-	property1:
-	 - valueb
-	 - valuec
-	property2: valuec
-EOF
+	cp test.yaml "$yaml_"
 }
 
-test_add_yaml_property() {
+test_add_yaml_property_failures() {
 
-	$(add_yaml_property &> /dev/null) 
+	$(add_yaml_property) 
 	assertEquals 'No parameter given should die' '1' "$?"
 
-	$(add_yaml_property 'NONEXISTANTFILE' &> /dev/null)
+	$(add_yaml_property 'NONEXISTANTFILE')
 	assertEquals 'Nonexistant file should die' '1' "$?"
 
 }

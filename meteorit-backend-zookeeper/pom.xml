@@ -289,7 +289,7 @@
 		</license>
 	</licenses>	
 		    
-	<!-- [meteorit@centos64 c]$ ls -lR TMPE/opt/zookeeper
+	<!-- ls -lR TMPE/opt/zookeeper
 TMPE/opt/zookeeper:
 total 2
 drwxr-xr-x. 1 meteorit meteorit 170 Sep 17 00:29 bin
