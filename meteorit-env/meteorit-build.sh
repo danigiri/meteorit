@@ -13,12 +13,19 @@ echo 'Installing development stuff...'
 grep -i debian /etc/*-release -q
 if [ $? -eq 0 ]; then
 
-	apt-get -y install wget gcc autoconf automake libtool rpm
+	apt-get -y install wget gcc autoconf automake libtool rpm install build-essential g++
+	# zookeeper (C++ macros)
+	apt-ger -y install libcppunit-dev
 	
 	# rpm to .deb
 	apt-get -y install ruby-dev
 	gem install fpm
-	apt-get -y install alien
+	apt-get -y install alien fakeroot
+	# so alien does not need to run as root to generate files with root permissions on them
+	#  mvn package -Dbinary.architecture_=armhf
+	# fakeroot alien -k *.rpm
+	# fakeroot fpm -s rpm -t deb --verbose -f `find . -name \*.rpm`                              
+
 
 else 
 	yum install -q -y wget

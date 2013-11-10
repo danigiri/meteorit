@@ -62,19 +62,34 @@
 				<version>1.1.1</version>
 				<configuration>
 					<backups>false</backups>
-					<patchFile>${project.build.outputDirectory}/filtered-zoo.cfg.patch</patchFile>
-					<targetDirectory>${zookeeper.sourcefolder_}/conf</targetDirectory>
-					<originalFile>${zookeeper.sourcefolder_}/conf/zoo_sample.cfg</originalFile>
-					<destFile>${project.build.outputDirectory}/conf/zoo.cfg</destFile>
 					<skipApplication>${skipPatch_}</skipApplication>
 				</configuration>
 				<executions>
 					<execution>
-						<id>patch</id>
+						<id>patch-zookeeper-config</id>
 						<phase>process-classes</phase>
 						<goals>
 							<goal>apply</goal>
 						</goals>
+						<configuration>				
+							<patchFile>${project.build.outputDirectory}/filtered-zoo.cfg.patch</patchFile>
+							<targetDirectory>${zookeeper.sourcefolder_}/conf</targetDirectory>
+							<originalFile>${zookeeper.sourcefolder_}/conf/zoo_sample.cfg</originalFile>
+							<destFile>${project.build.outputDirectory}/conf/zoo.cfg</destFile>			
+						</configuration>
+					</execution>
+					<execution>
+						<id>patch-zookeeper-mt_adaptor</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>apply</goal>
+						</goals>
+						<configuration>				
+							<patchFile>${project.build.outputDirectory}/mt_adaptor.c.patch</patchFile>
+							<targetDirectory>${zookeeper.sourcefolder_}/src/c/src</targetDirectory>
+							<originalFile>${zookeeper.sourcefolder_}/src/c/src/mt_adaptor.c</originalFile>
+							<destFile>${project.build.outputDirectory}/src/c/src/mt_adaptor.c</destFile>			
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

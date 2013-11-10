@@ -29,14 +29,19 @@ print_usage_exit() {
 	exit 0
 }
 
+################################################################################
+error_and_exit() {
+	#<message> <code>
+	printf "$1\n" >&2
+ 	exit $2
+}
 
 ################################################################################
 add_yaml_property() {
 	# <file> <property name> {<value0> <value1> ... }
 
  	if [ "$#" -eq 0 ]; then
- 		printf "No yaml config file passed\n" >&2
- 		exit 1
+ 		error_and_exit 'No yaml config file passed' 1
  	fi
  
  	f_="$1"
@@ -47,8 +52,12 @@ add_yaml_property() {
  		exit 1
  	fi
  	
- 	
+	if [ "$#" -lt 2 ]; then
+ 		printf "Can't find yaml config file ($f_)\n" >&2
+ 		exit 1
 
+	fi
+ 	
 }
 
 ################################################################################
