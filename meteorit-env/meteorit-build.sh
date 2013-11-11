@@ -10,17 +10,19 @@ MAVEN_INSTALL_FOLDER_="$PREFIX/apache-maven"
 
 echo 'Installing development stuff...'
 
-grep -i debian /etc/*-release -q
+grep -i debian /etc/os-release -q
 if [ $? -eq 0 ]; then
 
 	apt-get -y install wget gcc autoconf automake libtool rpm install build-essential g++
+	
+	# rpm to .deb
+	#apt-get -y install ruby-dev
+	#gem install fpm
+	apt-get -y install alien fakeroot
+	apt-get -y install lintian
 	# zookeeper (C++ macros)
 	apt-ger -y install libcppunit-dev
 	
-	# rpm to .deb
-	apt-get -y install ruby-dev
-	gem install fpm
-	apt-get -y install alien fakeroot
 	# so alien does not need to run as root to generate files with root permissions on them
 	#  mvn package -Dbinary.architecture_=armhf
 	# fakeroot alien -k *.rpm

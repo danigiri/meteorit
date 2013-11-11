@@ -15,44 +15,31 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-remove_user() {
 
-	id "$1" 2>/dev/null
+################################################################################
+is_debian() {
+	grep -i debian /etc/os-release -q
 	if [ $? -eq 0 ]; then
-		echo "Deleting '$1' user..."
-		/usr/sbin/userdel -f "$1"
+		return 0
 	else
-		echo "Can't delete '$1' user as it doesn't exist"
+		return 1
 	fi
+}
+
+
+################################################################################
+load_init_env() {
+
+}
+
+
+################################################################################
+success_() {
+	if is_debian; then
 	
-}
-
-
-add_daemon_user() {
-# <username> <homedir>
-
-	id "$1" 2>/dev/null
-	if [ $? -eq 1 ]; then
-		echo "Adding '$1' daemon user"
-		if [ $# -eq 2 ]; then
-			 /usr/sbin/useradd -c "$1 daemon" -d "$2" -M -r -s /sbin/nologin "$1"
-		else
-			 /usr/sbin/useradd -c "$1 daemon" -M -r -s /sbin/nologin "$1"
-		fi		
+	else
+	
 	fi
 
-}
-
-add_user() {
-# <username> <homedir>
-	id "$1" 2>/dev/null
-	if [ $? -eq 1 ]; then
-		echo "Adding '$1' user"
-		if [ $# -eq 2 ]; then
-			 /usr/sbin/useradd -c "$1 daemon" -d "$2" -M -r "$1"
-		else
-			 /usr/sbin/useradd -c "$1 daemon" -M -r "$1"
-		fi		
-	fi
 
 }
