@@ -27,15 +27,31 @@
 	    		<directory>${basedir}/src/main/bash</directory>
 	    		<targetPath>${project.build.directory}</targetPath>
 	    		<filtering>true</filtering>
+	    		<includes>
+	    			<include>${project.artifactId}-compile.*</include>
+	    			<include>*install.sh</include>
+	    		</includes>
+	    	</resource>
+	    	<resource>
+	    		<directory>${basedir}/src/main/bash</directory>
+	    		<targetPath>${project.build.outputDirectory}</targetPath>
+	    		<filtering>true</filtering>
+	    		<excludes>
+	    			<exclude>${project.artifactId}-compile.*</exclude>
+	    			<exclude>*install.sh</exclude>
+	    		</excludes>
 	    	</resource>
 	    	<resource>
 	    		<directory>${basedir}/src/test/bash</directory>
 	    		<targetPath>${project.build.directory}</targetPath>
 	    		<filtering>true</filtering>
+	       		<includes>
+	    			<include>${project.artifactId}-test.*</include>
+	    		</includes>
 	    	</resource>
 	    	<resource>
 	    		<directory>${basedir}/src/test/resources</directory>
-	    		<targetPath>${project.build.directory}</targetPath>
+	    		<targetPath>${project.build.directory}/test</targetPath>
 	    		<filtering>true</filtering>
 	    	</resource>
 	    	<resource>

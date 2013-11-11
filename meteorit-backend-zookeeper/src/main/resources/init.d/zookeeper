@@ -25,44 +25,46 @@
 #                    highly reliable distributed coordination
 ### END INIT INFO
 
-source /etc/rc.d/init.d/functions
-
-# Source networking configuration.
-. /etc/sysconfig/network
-
-# Check that networking is up.
-[ "$NETWORKING" = "no" ] && exit 0
-
 
 retval_=0
+NAME=zookeeper
 mon_=${install.prefix_}/mon/bin/mon
-mon_log_=/var/log/mon/mon-zookeeper.log
-pidfile_=/var/run/zookeeper.pid
-monpid_=/var/run/mon-zookeeper.pid
+mon_log_="/var/log/mon/mon-$NAME.log"
+pidfile_="/var/run/NAME.pid"
+monpid_="/var/run/mon-$NAME.pid"
 desc_="ZooKeeper daemon"
-lockfile_=/var/lock/subsys/zookeeper
+lockfile_="/var/lock/subsys/$NAME"
 zookeeper_="${zookeeper.installfolder_}/bin/zkServer.sh start-foreground"
+
+# Read configuration variable file if it is present
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+
+
+# load multiplatform init environment
+. ${install.prefix_}/share/meteorit/meteorit-init-functions
+load_init_env
 
 source ${zookeeper.installfolder_}/bin/zkEnv.sh
 
 start() {
- 	echo -n $"Starting $desc_ (zookeeper): "
+ 	message_ "Starting $desc_ (zookeeper): "
 	$mon_ -l "$mon_log_" -s 1  -p "$pidfile_" -m "$monpid_" -d "su - '${zookeeper.username_}' -m --session-command='sh $zookeeper_'"
   	retval_=$?
-  	[ $retval_ -eq 0 ] && success
-  	[ $retval_ -ne 0 ] && failure
+  	[ $retval_ -eq 0 ] && success_
+  	[ $retval_ -ne 0 ] && failure_
 	echo
   	[ $retval_ -eq 0 ] && touch "$lockfile_"
     return $retval_
 }
 
 stop() {
- 	echo -n $"Stopping ZooKeeper daemon (zookeeper): "
+ 	message_ "Stopping ZooKeeper daemon (zookeeper): "
+ 	# killproc is crossplatform :)
 	killproc -p "$monpid_" -SIGTERM
   	retval_=$?
   	sleep 1
-  	[ $retval_ -eq 0 ] && success
-  	[ $retval_ -ne 0 ] && failure
+  	[ $retval_ -eq 0 ] && success_
+  	[ $retval_ -ne 0 ] && failure_
   	echo
   	[ $retval_ -eq 0 ] && rm -f "$lockfile_" "$pidfile_" "$monpid_"
     return $retval_
