@@ -56,10 +56,18 @@ failure_() {
 	[ "$VERBOSE" != no ] && log_end_msg 1	
 }
 
+
 ################################################################################
 message_() {
 	[ "$VERBOSE" != no ] && log_daemon_msg $@
 }
+
+
+################################################################################
+establish_lockfile_prefix_path() {
+	lockfile_prefix_path_='/var/lock'	
+}
+
 	
 else
 
@@ -95,6 +103,14 @@ failure_() {
 message_() {
 	echo -n $@
 }
+	
+
+################################################################################
+establish_lockfile_prefix_path() {
+	lockfile_prefix_path_='/var/lock/subsys'	
+}
+
+	
 	
 fi
 
