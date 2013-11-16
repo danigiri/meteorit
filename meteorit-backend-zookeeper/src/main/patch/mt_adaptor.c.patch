@@ -1,0 +1,24 @@
+*** src/mt_adaptor.c	2013-11-10 19:55:25.132111405 +0100
+--- src/mt_adaptor.c	2013-11-10 19:54:57.182671304 +0100
+***************
+*** 483,488 ****
+--- 483,491 ----
+  int32_t fetch_and_add(volatile int32_t* operand, int incr)
+  {
+  #ifndef WIN32
++ #if defined(__GNUC__)
++     return __sync_fetch_and_add(operand,incr);
++ #else
+      int32_t result;
+      asm __volatile__(
+           "lock xaddl %0,%1\n"
+***************
+*** 490,495 ****
+--- 493,499 ----
+           : "0"(incr)
+           : "memory");
+     return result;
++ #endif
+  #else
+      volatile int32_t result;
+      _asm

@@ -6,7 +6,7 @@
 	<packaging>rpm</packaging>
 
 	<name>Meteorit system shell utils and environment</name>
-	<description>Downloads lua JIT and compiles it onto a RPM
+	<description>Includes all shared scripts between
 	</description>
     <inceptionYear>2013</inceptionYear>
     <url>http://dani.calidos.com</url>
@@ -20,6 +20,7 @@
     
     <properties>
 	    <env.installfolder_>${install.prefix_}/share/meteorit</env.installfolder_>
+	    <binary.architecture_>noarch</binary.architecture_>
     </properties>
     
     <build>
@@ -50,7 +51,7 @@
                     </defineStatements>
 
                     <defaultDirmode>755</defaultDirmode>
-                    <defaultFilemode>755</defaultFilemode>
+                    <defaultFilemode>644</defaultFilemode>
                     <defaultUsername>root</defaultUsername>
                     <defaultGroupname>root</defaultGroupname>
                                
@@ -63,45 +64,13 @@
 						<mapping>	
 							<sources>
 								<source>
-									<location>${project.build.directory}/meteorit-common.sh</location>
-									<excludes>
-										<exclude>install*.sh</exclude>
-									</excludes>
+									<location>${project.build.outputDirectory}</location>
 								</source>
 							</sources>
 							<directory>${env.installfolder_}</directory>
 							<directoryIncluded>true</directoryIncluded>
 						</mapping>        
-                    	<mapping>
-							<sources>
-                    			<source>
-                    				<location>${project.build.outputDirectory}/LICENSE</location>
-                    			</source>
-                    		</sources>
-                    		<filemode>644</filemode>
-                    		<username>root</username>
-                    		<groupname>root</groupname>
-							<directory>${env.installfolder_}</directory>
-							<directoryIncluded>false</directoryIncluded>
-						</mapping>
                     </mappings>
-
-					<preinstallScriptlet>
-						<scriptFile>${project.build.directory}/preinstall.sh</scriptFile>
-						<fileEncoding>utf-8</fileEncoding>
-					</preinstallScriptlet>                    
-					<postinstallScriptlet>
-						<scriptFile>${project.build.directory}/postinstall.sh</scriptFile>
-						<fileEncoding>utf-8</fileEncoding>
-					</postinstallScriptlet>                    
-					<preremoveScriptlet>
-						<scriptFile>${project.build.directory}/preremove.sh</scriptFile>
-						<fileEncoding>utf-8</fileEncoding>
-					</preremoveScriptlet>                    
-					<postremoveScriptlet>
-						<scriptFile>${project.build.directory}/postremove.sh</scriptFile>
-						<fileEncoding>utf-8</fileEncoding>
-					</postremoveScriptlet>    
 
 			    </configuration>
 		   </plugin>

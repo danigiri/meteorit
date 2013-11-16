@@ -16,7 +16,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-. ${install.prefix_}/share/meteorit/meteorit-common.sh
+. ${install.prefix_}/share/meteorit/meteorit-common
 
 
 ################################################################################
@@ -31,29 +31,78 @@ print_usage_exit() {
 
 
 ################################################################################
-add_yaml_property() {
-	# <file> <property name> {<value0> <value1> ... }
+error_and_exit() {
+	#<message> <code>
+	printf "$1\n" >&2
+ 	exit $2
+}
 
- 	if [ "$#" -eq 0 ]; then
- 		printf "No yaml config file passed\n" >&2
- 		exit 1
+
+################################################################################
+process_yaml_file_parameter_() {
+	# <file> 
+	
+ 	if [ $# -eq 0 ]; then
+ 		error_and_exit 'No yaml config file passed' 1
  	fi
  
  	f_="$1"
  	shift
  	
- 	if [ ! -e "$1" ]; then
+ 	if [ ! -e "$f_" ]; then
  		printf "Can't find yaml config file ($f_)\n" >&2
  		exit 1
  	fi
+	
+}
+
+
+################################################################################
+add_yaml_property() {
+	# <file> <property name> {<value0> <value1> ... }
+
+	process_yaml_file_parameter_ $@
+ 	
+	if [ $# -lt 2 ]; then
+ 		printf "Should pass propertyname and value\n" >&2
+ 		exit 1
+	fi
+ 	
+}
+
+
+################################################################################
+has_yaml_property() {
+
+	process_yaml_file_parameter_ $@
+
+	if [ $# -ne 2 ]; then
+ 		printf "Should pass propertyname only\n" >&2
+ 		exit 1
+	fi
+
+	p_="$2"
+	grep -q "$p_" "$f_"
+	if [ "$?" -ne 0 ]; then
+		printf "Property not found ($?)\n" >&2
+		exit 1
+	fi
+	
+	exit 0
+}
+
+
+################################################################################
+get_yaml_property() {
+	$(has_yaml_property $@)
 
 }
+
 
 ################################################################################
 add_zookeeper_addresses() {
  	# $1 file {address address ...}
- echo 'aa'
-
+	a=a
   
 }
 
@@ -82,3 +131,10 @@ elif [[ "$nimbus_" == 'yes' ]]; then
 	a=a
 
 fi
+
+
+
+
+
+
+

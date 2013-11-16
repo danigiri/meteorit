@@ -17,7 +17,7 @@
 #  limitations under the License.
 
 
-. ${install.prefix_}/share/meteorit/meteorit-common.sh
+. ${install.prefix_}/share/meteorit/meteorit-common
 
 # add zookeeper nonprivileged user with specified home dir
 add_user '${zookeeper.username_}' '${zookeeper.installfolder_}'

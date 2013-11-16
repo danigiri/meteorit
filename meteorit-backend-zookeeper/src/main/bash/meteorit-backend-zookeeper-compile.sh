@@ -14,6 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# TODO: build complains about running libtool because of staged build
+
 cd '${zookeeper.sourcefolder_}/src/c'
 if [ -e cli_mt ]; then
 	echo 'Zookeeper binary clients already built, skipping'
