@@ -28,7 +28,6 @@ if [ $? -eq 0 ]; then
 	# fakeroot alien -k *.rpm
 	# fakeroot fpm -s rpm -t deb --verbose --rpm-use-file-permissions -f `find . -name \*.rpm`                              
 
-
 else 
 	yum install -q -y wget
 
