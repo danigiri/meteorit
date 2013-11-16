@@ -257,7 +257,7 @@
 						<mapping>
 							<sources>
                     			<source>
-                    				<location>${project.build.directory}/${project.artifactId}-installtest.sh</location>
+                    				<location>${project.build.outputDirectory}/${project.artifactId}-installtest.sh</location>
                     			</source>
                     		</sources>
    	                        <username>${zookeeper.username_}</username>

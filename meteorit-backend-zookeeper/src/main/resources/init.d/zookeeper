@@ -30,10 +30,9 @@ retval_=0
 NAME=zookeeper
 mon_=${install.prefix_}/mon/bin/mon
 mon_log_="/var/log/mon/mon-$NAME.log"
-pidfile_="/var/run/NAME.pid"
+pidfile_="/var/run/$NAME.pid"
 monpid_="/var/run/mon-$NAME.pid"
 desc_="ZooKeeper daemon"
-lockfile_="/var/lock/subsys/$NAME"
 zookeeper_="${zookeeper.installfolder_}/bin/zkServer.sh start-foreground"
 
 # Read configuration variable file if it is present
@@ -43,6 +42,9 @@ zookeeper_="${zookeeper.installfolder_}/bin/zkServer.sh start-foreground"
 # load multiplatform init environment
 . ${install.prefix_}/share/meteorit/meteorit-init-functions
 load_init_env
+establish_lockfile_prefix_path
+
+lockfile_="$lockfile_prefix_path_/$NAME"
 
 source ${zookeeper.installfolder_}/bin/zkEnv.sh
 
