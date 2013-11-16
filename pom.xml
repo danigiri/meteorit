@@ -26,6 +26,14 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
+	<modules>
+		<module>meteorit-compile-parent</module>
+		<module>meteorit-env</module>
+		<module>meteorit-backend-mon</module>
+		<module>meteorit-backend-zookeeper</module>
+		<module>meteorit-backend-storm</module>
+	<modules>
+
 	<developers>
 		<developer>
 			<id>${developer.id_}</id>
