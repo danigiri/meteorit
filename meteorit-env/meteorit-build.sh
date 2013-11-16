@@ -26,7 +26,7 @@ if [ $? -eq 0 ]; then
 	# so alien does not need to run as root to generate files with root permissions on them
 	#  mvn package -Dbinary.architecture_=armhf
 	# fakeroot alien -k *.rpm
-	# fakeroot fpm -s rpm -t deb --verbose -f `find . -name \*.rpm`                              
+	# fakeroot fpm -s rpm -t deb --verbose --rpm-use-file-permissions -f `find . -name \*.rpm`                              
 
 
 else 
