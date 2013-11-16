@@ -20,26 +20,65 @@ SHUNIT2_=/usr/share/shunit2/shunit2
 oneTimeSetUp() {
 	workfolder_="$SHUNIT_TMPDIR"
 	yaml_="$workfolder_/test.yaml"
-	source './meteorit-backend-storm-setup.sh'
+	source '${project.build.outputDirectory}/meteorit-backend-storm-setup.sh'
 }
 
 
 setUp() {
-	cp test.yaml "$yaml_"
+	# pwd is target
+	cp test/test.yaml "$yaml_"
+
 }
 
-test_add_yaml_property_failures() {
+test_add_yaml_property() {
 
 	$(add_yaml_property) 
-	assertEquals 'No parameter given should die' '1' "$?"
+	assertEquals 'No file parameter given, should die' '1' "$?"
 
 	$(add_yaml_property 'NONEXISTANTFILE')
-	assertEquals 'Nonexistant file should die' '1' "$?"
+	assertEquals 'Nonexistant file, should die' '1' "$?"
 
 	$(add_yaml_property "$yaml_")
-	assertEquals 'No propert added should die' '1' "$?"
+	assertEquals 'No property specified, should die' '1' "$?"
 
 }
 
 
+test_has_yaml_property() {
+
+	$(has_yaml_property >&2 /dev/null) 
+	assertEquals 'No file parameter given, should die' '1' "$?"
+
+	$(has_yaml_property 'NONEXISTANTFILE' >&2 /dev/null)
+	assertEquals 'Nonexistant file, should die' '1' "$?"
+
+	$(has_yaml_property "$yaml_" >&2 /dev/null)
+	assertEquals 'No property specified, should die' '1' "$?"
+
+	$(has_yaml_property "$yaml_" 'notfoundproperty' >&2 /dev/null)
+	assertEquals 'Not found property, should die' '1' "$?"
+	
+	$(has_yaml_property "$yaml_" 'atribute.text')
+	assertEquals 'Existant property, should not die' '0' "$?"	
+	
+}
+
+test_get_yaml_property() {
+
+	$(get_yaml_property) 
+	assertEquals 'No parameter given should die' '1' "$?"
+
+	$(get_yaml_property 'NONEXISTANTFILE')
+	assertEquals 'Nonexistant file should die' '1' "$?"
+
+	$(get_yaml_property "$yaml_")
+	assertEquals 'No property specified should die' '1' "$?"
+
+	$(get_yaml_property "$yaml_" 'notfoundproperty')
+	assertEquals 'No property should die' '1' "$?"
+
+}
+
 . $SHUNIT2_
+
+# fix for stupid vmware bug

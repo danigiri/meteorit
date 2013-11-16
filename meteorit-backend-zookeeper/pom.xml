@@ -28,6 +28,10 @@
 		<zookeeper.logfolder_>/var/log/zookeeper</zookeeper.logfolder_>
 		<zookeeper.username_>zookeeper</zookeeper.username_>
 		<zookeeper.groupname_>zookeeper</zookeeper.groupname_>
+		<zookeeper.folderpermissions.default_>755</zookeeper.folderpermissions.default_>
+		<zookeeper.filepermissions.default_>644</zookeeper.filepermissions.default_>
+		<zookeeper.execpermissions.writable_>775</zookeeper.execpermissions.writable_>
+		<zookeeper.filepermissions.writable_>664</zookeeper.filepermissions.writable_>
 		<skipPatch_>false</skipPatch_>	<!-- to skip reapplying patch -->
     </properties>
     
@@ -118,8 +122,8 @@
                         <defineStatement>_app ${project.artifactId}</defineStatement>
                     </defineStatements>
 
-                    <defaultDirmode>755</defaultDirmode>
-                    <defaultFilemode>644</defaultFilemode>
+                    <defaultDirmode>${zookeeper.folderpermissions.default_}</defaultDirmode>
+                    <defaultFilemode>${zookeeper.filepermissions.default_}</defaultFilemode>
                     <defaultUsername>${zookeeper.username_}</defaultUsername>
                     <defaultGroupname>${zookeeper.groupname_}</defaultGroupname>
                                
@@ -214,24 +218,30 @@
 							<directory>${zookeeper.installfolder_}</directory>
 						</mapping>
 						<mapping>	<!-- configuration -->
+							<directory>${zookeeper.installfolder_}/conf</directory>
+							<filemode>${zookeeper.execpermissions.writable_}</filemode>							
+						</mapping>
+						<mapping>
 							<sources>
 								<source>
 									<location>${project.build.outputDirectory}/conf/</location>
 								</source>
 							</sources>
 							<directory>${zookeeper.installfolder_}/conf</directory>
+							<filemode>${zookeeper.filepermissions.writable_}</filemode>							
+							<directoryIncluded>false</directoryIncluded>
 						</mapping>
 						<mapping>	<!-- data folder -->
 							<directory>${zookeeper.datafolder_}</directory>
 							<username>root</username>
 							<groupname>${zookeeper.groupname_}</groupname>
-							<filemode>775</filemode>							
+							<filemode>${zookeeper.execpermissions.writable_}</filemode>							
 						</mapping>
 						<mapping>	<!-- log folder -->
 							<directory>${zookeeper.logfolder_}</directory>
 							<username>root</username>
 							<groupname>${zookeeper.groupname_}</groupname>
-							<filemode>775</filemode>	
+							<filemode>${zookeeper.execpermissions.writable_}</filemode>	
 						</mapping>
 						<mapping>	<!-- init.d scripts, as root -->
                     		<sources>
@@ -239,9 +249,9 @@
                     				<location>${project.build.outputDirectory}/init.d</location>
                     			</source>
                     		</sources>
- 	                        <username>root</username>
+ 	                        <username>root</username> <!-- must be root and not configurable -->  
                             <groupname>root</groupname>  
-                            <filemode>755</filemode>                  		
+                            <filemode>755</filemode>           		
                        		<directory>/etc/init.d</directory>  		
                        		<directoryIncluded>false</directoryIncluded>
                     	</mapping>	
@@ -257,7 +267,7 @@
 						<mapping>
 							<sources>
                     			<source>
-                    				<location>${project.build.directory}/${project.artifactId}-installtest.sh</location>
+                    				<location>${project.build.outputDirectory}/${project.artifactId}-installtest.sh</location>
                     			</source>
                     		</sources>
    	                        <username>${zookeeper.username_}</username>
