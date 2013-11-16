@@ -109,7 +109,7 @@
 				<configuration>
 					<backups>false</backups>
 					<targetDirectory>${storm.sourcefolder_}/logback</targetDirectory>
-					<patchFile>${project.build.outputDirectory}/cluster.xml.patch</patchFile>
+					<patchFile>${project.build.outputDirectory}/filtered-cluster.xml.patch</patchFile>
 					<destFile>${project.build.directory}/cluster.xml</destFile>
 					<skipApplication>${skipPatch_}</skipApplication>
 				</configuration>
