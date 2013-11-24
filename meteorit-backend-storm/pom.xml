@@ -102,7 +102,7 @@
                 </executions>
 		    </plugin>
 		    
-		    <plugin>	<!-- global nginx configuration patch (diff -u cluster.xml cluster2.xml) -->
+		    <plugin>	<!-- logback configuration patch (diff -u cluster.xml cluster2.xml) -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-patch-plugin</artifactId>
 				<version>1.1.1</version>
@@ -171,6 +171,9 @@
 							<sources>
 								<source>
 									<location>${storm.sourcefolder_}/bin/storm</location>
+								</source>
+								<source>
+									<location>${project.build.outputDirectory}/${project.artifactId}-setup.sh</location>
 								</source>
 							</sources>
 							<directory>${storm.installfolder_}/bin</directory>
