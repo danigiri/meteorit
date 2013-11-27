@@ -18,6 +18,7 @@
 
 ################################################################################
 is_debian() {
+	[ -e /etc/os-release ] || return 1
 	grep -i debian /etc/os-release -q
 	if [ $? -eq 0 ]; then
 		return 0
