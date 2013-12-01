@@ -16,12 +16,11 @@
 
 echo 'Installing base stuff...'
 # http://wiki.centos.org/AdditionalResources/Repositories/RPMForge
-yum install -q -y wget
 
 grep -i debian /etc/*-release -q
 if [ $? -eq 0 ]; then
 	apt-get -y install shunit2
-		
+	apt-get -y install wget
 else
 
 	# repos, they aren't actually needed
@@ -44,10 +43,11 @@ else
 #	fi
 #	rpm -Uvh epel-release-6*.rpm
 	
-	yum install -q -y java-1.6.0-openjdk pcre zlib 
+	yum install -q -y wget
+	yum install -q -y java-1.6.0-openjdk pcre zlib shunit2
 	
 	# storm deps
-	yum install -q -y unzip libuuid libuuid-devel
+	yum install -q -y unzip libuuid libuuid-devel zeromq
 
 fi
 

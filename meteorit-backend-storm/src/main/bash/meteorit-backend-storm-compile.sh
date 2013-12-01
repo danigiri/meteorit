@@ -14,6 +14,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+[ -z USED_JAVA_HOME ] && USED_JAVA_HOME='/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64'
+if [ ! -e "$USED_JAVA_HOME" ]; then
+	echo "Please set 'USED_JAVA_HOME' env variable so JZMQ can be built"
+	exit 1
+fi
+
 cd '${jzmq.sourcefolder_}'
 if [ -e src/zmq.jar ]; then
 	echo 'jzmq already built, skipping'
@@ -34,8 +40,9 @@ fi
 
 echo 'Configuring (2/2):'
 chmod a+x -v ./configure
+
 # can't seem to locate the jni.h otherwise
-JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64 ./configure --with-zeromq=/usr \
+JAVA_HOME="$USED_JAVA_HOME" ./configure --with-zeromq=/usr \
 	| pv -f -l -p -s 103 > ./configure.output
 ERR_=$?
 if [ $ERR_ -ne 0 ]; then
