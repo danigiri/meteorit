@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-[ -z USED_JAVA_HOME ] && USED_JAVA_HOME='/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64'
+[ -z USED_JAVA_HOME ] || USED_JAVA_HOME='/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64'
 if [ ! -e "$USED_JAVA_HOME" ]; then
 	echo "Please set 'USED_JAVA_HOME' env variable so JZMQ can be built"
 	exit 1
