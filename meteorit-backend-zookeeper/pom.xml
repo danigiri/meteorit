@@ -32,7 +32,7 @@
 		<zookeeper.filepermissions.default_>644</zookeeper.filepermissions.default_>
 		<zookeeper.execpermissions.writable_>775</zookeeper.execpermissions.writable_>
 		<zookeeper.filepermissions.writable_>664</zookeeper.filepermissions.writable_>
-		<skipPatch_>false</skipPatch_>	<!-- to skip reapplying patch -->
+		<skipPatch_>false</skipPatch_>	<!-- to skip reapplying patches -->
     </properties>
     
     <build>
@@ -255,16 +255,7 @@
                        		<directory>/etc/init.d</directory>  		
                        		<directoryIncluded>false</directoryIncluded>
                     	</mapping>	
-						<mapping>
-							<sources>
-                    			<source>
-                    				<location>${project.build.outputDirectory}/LICENSE</location>
-                    			</source>
-                    		</sources>
-							<directory>${zookeeper.installfolder_}</directory>
-							<directoryIncluded>false</directoryIncluded>
-						</mapping>
-						<mapping>
+						<mapping>	<!--  installation verification script -->
 							<sources>
                     			<source>
                     				<location>${project.build.outputDirectory}/${project.artifactId}-installtest.sh</location>
@@ -275,6 +266,15 @@
                             <filemode>755</filemode>                  		
 							<directory>${zookeeper.installfolder_}/test</directory>
 							<directoryIncluded>true</directoryIncluded>
+						</mapping>
+						<mapping>
+							<sources>
+                    			<source>
+                    				<location>${project.build.outputDirectory}/LICENSE</location>
+                    			</source>
+                    		</sources>
+							<directory>${zookeeper.installfolder_}</directory>
+							<directoryIncluded>false</directoryIncluded>
 						</mapping>
                     </mappings>
 					<preinstallScriptlet>
@@ -296,12 +296,17 @@
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
 			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
-			<comments>Copyright (C) 2013 Daniel Giribet</comments>
+			<comments>Copyright (C) 2013 Daniel Giribet (packaging)</comments>
 		</license>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
 			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
 			<comments>ZooKeeper credits (http://zookeeper.apache.org/credits.html)</comments>
+		</license>
+		<license>
+			<name>LGPL (GNU Lesser General Public License)</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<comments># Copyright (C) 2008 Kate Ward. All Rights Reserved (shUnit2)</comments>
 		</license>
 	</licenses>	
 		    

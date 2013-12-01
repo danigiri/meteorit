@@ -21,20 +21,25 @@
 
 ################################################################################
 print_usage_exit() {
-	printf "\t%s\n" "Meteorit storm configuration system\n" \
-		   "Usage:\t$0 [-h] [-z {host0 host1 ...} [-n [host]]\n" \
-		   "\t\t -z [{host0 host1 ...}]: set zookeeper node adresses (empty for localhost)\n" \
-		   "\t\t -n [host]: set nimbus node address (empty for localhost)\n" \
-		   "\t\t -h: provide help\n" \
+
+	printf "Meteorit storm configuration system\n" 1>&2 
+	printf "Usage:\t$0 [-h] [-z {host0 host1 ...} [-n [host]]\n" 1>&2 
+	printf "\t\t -z [{host0 host1 ...}]: set zookeeper node adresses\n" 1>&2 
+	printf "\t\t -n [host]: set nimbus node address\n" 1>&2 
+	printf "\t\t -h: provide help\n" 1>&2
+	
 	exit 0
+	
 }
 
 
 ################################################################################
 error_and_exit_() {
 	#<message> <code>
+
 	printf "$1\n" 1>&2
  	exit $2
+ 	
 }
 
 
@@ -76,6 +81,7 @@ set_yaml_property() {
 	fi
  	
  	echo "$p_: $v_" >> "$f_"
+
 }
 
 
@@ -129,6 +135,7 @@ has_yaml_property() {
 	fi
 	
 	exit 0
+	
 }
 
 

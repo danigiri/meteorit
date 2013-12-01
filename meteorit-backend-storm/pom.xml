@@ -39,23 +39,6 @@
     </properties>
     
     <build>
- <!--    	<resources>
-      		<resource>
-    			<directory>src/main/resources/conf</directory>
-    			<filtering>true</filtering>
-	    		<targetPath>${project.build.directory}/conf</targetPath>
-    		</resource>
- 		<resource>
-    			<directory>src/test/resources</directory>
-    			<filtering>true</filtering>
-    		</resource>
-    		<resource>
-    			<directory>src/main/patch</directory>
-    			<filtering>true</filtering>
-    		</resource>
-   	</resources>
- -->    
-    
    		<plugins>
 
             <plugin>	<!-- Download and expand whatever is needed -->
