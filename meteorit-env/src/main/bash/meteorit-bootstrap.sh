@@ -47,7 +47,7 @@ else
 	yum install -q -y java-1.6.0-openjdk pcre zlib shunit2
 	
 	# storm deps
-	yum install -q -y unzip libuuid libuuid-devel zeromq
+	yum install -q -y unzip libuuid libuuid-devel zeromq 
 
 fi
 

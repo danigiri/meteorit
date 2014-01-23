@@ -19,8 +19,8 @@
     </parent>
     
     <properties>
-		<storm.version_>0.9.0-rc2</storm.version_>
-		<storm.url_>https://dl.dropboxusercontent.com/s/p5wf0hsdab5n9kn/storm-${storm.version_}.zip</storm.url_>
+		<storm.version_>0.9.0.1</storm.version_>		
+		<storm.url_>https://dl.dropboxusercontent.com/s/dj86w8ojecgsam7/storm-${storm.version_}.zip</storm.url_>
 		<storm.sourcefolder_>${project.build.directory}/storm-${storm.version_}</storm.sourcefolder_>
 		<storm.installfolder_>${install.prefix_}/storm</storm.installfolder_>
 		<storm.datafolder_>/var/storm</storm.datafolder_>

@@ -53,6 +53,9 @@ else
 
 	# Needed for Maven
 	yum install -q -y java-1.6.0-openjdk
+	
+	# storm deps
+	yum install -q -y zeromq zeromq-devel
 
 fi
 echo 'Installing maven...'
