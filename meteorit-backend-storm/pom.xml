@@ -19,9 +19,11 @@
     </parent>
     
     <properties>
-		<storm.version_>0.9.0.1</storm.version_>		
-		<storm.url_>https://dl.dropboxusercontent.com/s/dj86w8ojecgsam7/storm-${storm.version_}.zip</storm.url_>
-		<storm.sourcefolder_>${project.build.directory}/storm-${storm.version_}</storm.sourcefolder_>
+		<storm.version_>0.9.1-incubating</storm.version_>		
+		<!-- please use listing at: http://www.apache.org/dyn/closer.cgi/incubator/storm/apache-storm-0.9.1-incubating/apache-storm-0.9.1-incubating.zip -->
+		<storm.mirrorhost_>apache.rediris.es</storm.mirrorhost_>
+		<storm.url_>http://${storm.mirrorhost_}/incubator/storm/apache-storm-${storm.version_}/apache-storm-${storm.version_}.zip</storm.url_>
+		<storm.sourcefolder_>${project.build.directory}/apache-storm-${storm.version_}</storm.sourcefolder_> <!-- where zip gets expanded -->
 		<storm.installfolder_>${install.prefix_}/storm</storm.installfolder_>
 		<storm.datafolder_>/var/storm</storm.datafolder_>
 		<!--<storm.configfolder_>/etc</storm.configfolder_>-->
@@ -147,10 +149,12 @@
                     </requires>
                     	
                     <mappings>
- 						<mapping>	<!-- storm installation -->
+                    	<!-- storm installation -->
+ 						<mapping>
 							<directory>${storm.installfolder_}</directory>
  						</mapping>
- 						<mapping>	<!-- storm: script -->	
+						<!-- storm: script -->	
+ 						<mapping>
 							<sources>
 								<source>
 									<location>${storm.sourcefolder_}/bin/storm</location>
@@ -165,19 +169,8 @@
                             <filemode>755</filemode>
 							<directoryIncluded>true</directoryIncluded>
 						</mapping>
-                   		<mapping>	<!-- storm: jars -->
-							<sources>
-								<source>
-									<location>${storm.sourcefolder_}</location>
-									<includes>
-										<include>*.jar</include>
-									</includes>
-								</source>
-							</sources>
-							<directory>${storm.installfolder_}</directory>
-							<directoryIncluded>true</directoryIncluded>
-						</mapping>
-                   		<mapping>	<!-- storm: dependency jars -->
+						<!-- storm: dependency jars and storm-core -->
+                   		<mapping>	
 							<sources>
 								<source>
 									<location>${storm.sourcefolder_}/lib</location>
@@ -186,7 +179,8 @@
 							<directory>${storm.installfolder_}/lib</directory>
 							<directoryIncluded>true</directoryIncluded>
 						</mapping>
-						<mapping>	<!-- storm: ui resources -->
+						<!-- storm: ui resources -->
+						<mapping>
 							<sources>
 								<source>
 									<location>${storm.sourcefolder_}/public</location>
@@ -195,7 +189,8 @@
 							<directory>${storm.installfolder_}/public</directory>
 							<directoryIncluded>true</directoryIncluded>
 						</mapping>
-						<mapping>	<!-- storm: needed release flag file -->
+						<!-- storm: needed release flag file + the rest of the text stuff -->
+						<mapping>
 							<sources>
 								<source>
 									<location>${storm.sourcefolder_}/RELEASE</location>
@@ -203,7 +198,8 @@
 							</sources>
 							<directory>${storm.installfolder_}</directory>
 						</mapping>
-						<mapping>	<!-- storm: final configuration yaml -->
+						<!-- storm: final configuration yaml -->
+						<mapping>
 							<directory>${storm.configfolder_}</directory>
 						</mapping>
 						<mapping>
@@ -219,7 +215,8 @@
 							<directoryIncluded>false</directoryIncluded>
 							<configuration>noreplace</configuration>
 						</mapping>
-						<mapping>	<!-- storm: final logback configuration -->
+						<!-- storm: final logback configuration -->
+						<mapping>
 							<directory>${storm.installfolder_}/logback</directory>
 						</mapping>
 						<mapping>
@@ -234,20 +231,23 @@
 							<directory>${storm.installfolder_}/logback</directory>
 							<configuration>noreplace</configuration>
 							<directoryIncluded>false</directoryIncluded>
-						</mapping>	
-						<mapping>	<!-- storm: local temporary folder -->
+						</mapping>
+						<!-- storm: local temporary folder -->	
+						<mapping>
 							<directory>${storm.datafolder_}</directory>
 						    <username>root</username>
                             <groupname>${storm.groupname_}</groupname>  
                             <filemode>775</filemode>
 						</mapping>
-						<mapping>	<!-- storm: log folder -->
+						<!-- storm: log folder -->
+						<mapping>
 							<directory>${storm.logfolder_}</directory>
 						    <username>root</username>
                             <groupname>${storm.groupname_}</groupname>  
                             <filemode>775</filemode>
 						</mapping>
-						<mapping>	<!-- init.d scripts, as root -->
+						<!-- init.d scripts, as root -->
+						<mapping>	
                     		<sources>
                     			<source>
                     				<location>${project.build.outputDirectory}/init.d</location>
@@ -259,7 +259,8 @@
                        		<directory>/etc/init.d</directory>  		
                        		<directoryIncluded>false</directoryIncluded>
                     	</mapping>
-						<mapping>	<!-- jzmq binary libs -->
+                   		<!-- jzmq binary libs -->
+						<mapping>
                     		<sources>
                     			<source>
                     				<location>${jzmq.tempfolder_}/${jzmq.installfolder_}/lib</location>
@@ -284,7 +285,8 @@
                        		<directory>${jzmq.installfolder_}/lib</directory>
                        		<directoryIncluded>false</directoryIncluded>
                        	</mapping>
-                       	<mapping>	<!-- jzmq java libs -->
+                       	<!-- jzmq java libs -->
+                       	<mapping>
 							<sources>
 								<source>
 									<location>${jzmq.tempfolder_}/${jzmq.installfolder_}/share/java</location>
