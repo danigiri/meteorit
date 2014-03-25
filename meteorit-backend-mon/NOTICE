@@ -1,0 +1,9 @@
+Meteorit-backend-mon
+Copyright 2014 Daniel Giribet <dani - calidos.cat>
+Licensed under the Apache License, Version 2.0
+http://www.apache.org/licenses/LICENSE-2.0
+
+This software packages the software 'mon(1)' by TJ Holowaychuk
+Copyright (c) 2013 TJ Holowaychuk
+The MIT License (MIT)
+MIT (https://github.com/visionmedia/mon/#license)
