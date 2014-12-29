@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.calidos.dani.meteorit</groupId>
 	<artifactId>meteorit-backend-mon</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<packaging>rpm</packaging>
 
 	<name>Meteorit system backend process monitoring component</name>
@@ -30,12 +30,12 @@
     <parent>
     	<groupId>com.calidos.dani.meteorit</groupId>
 		<artifactId>meteorit-compile-parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.1.0-SNAPSHOT</version>
 		<relativePath>../meteorit-compile-parent/pom.xml</relativePath>
     </parent>
     
     <properties>
-    	<mon.version_>1.2.2</mon.version_>
+    	<mon.version_>1.2.3</mon.version_>
 		<mon.url_>https://github.com/visionmedia/mon/archive/${mon.version_}.tar.gz</mon.url_>
 		<mon.sourcefolder_>${project.build.directory}/mon-${mon.version_}</mon.sourcefolder_>
 		<mon.installfolder_>${install.prefix_}/mon</mon.installfolder_>

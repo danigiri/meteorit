@@ -16,7 +16,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-. ${install.prefix_}/share/meteorit/meteorit-common
+. ${meteorit.libs_}/meteorit-common
 
 # last time
 if [ "$1" == '0' ]; then

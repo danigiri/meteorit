@@ -1,4 +1,4 @@
-Meteorit license (packaging):
+License for Meteorit-backend-zookeeper and Zookeeper:
 
                                  Apache License
                            Version 2.0, January 2004
@@ -201,11 +201,6 @@ Meteorit license (packaging):
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   
-   
-License for Zookeeper:
-   
-Apache license 2.0 (http://zookeeper.apache.org/credits.html)
   
 License for shUnit2:
 

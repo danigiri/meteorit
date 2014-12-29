@@ -19,7 +19,6 @@ echo 'Installing base stuff...'
 
 grep -i debian /etc/*-release -q
 if [ $? -eq 0 ]; then
-	apt-get -y install shunit2
 	apt-get -y install wget
 else
 
@@ -44,7 +43,7 @@ else
 #	rpm -Uvh epel-release-6*.rpm
 	
 	yum install -q -y wget
-	yum install -q -y java-1.6.0-openjdk pcre zlib shunit2
+	yum install -q -y java-1.6.0-openjdk pcre zlib
 	
 	# storm deps
 	yum install -q -y unzip libuuid libuuid-devel zeromq 

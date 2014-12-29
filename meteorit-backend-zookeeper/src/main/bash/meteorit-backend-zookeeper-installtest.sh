@@ -1,6 +1,6 @@
-#/bin/bash
+#!/usr/bin/env bash
 
-#  Copyright 2013 Daniel Giribet <dani - calidos.cat>
+#  Copyright 2014 Daniel Giribet <dani - calidos.cat>
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,11 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-SHUNIT2_=/usr/share/shunit2/shunit2
 ZK_CLIENT_=${zookeeper.installfolder_}/bin/cli_st
 ZK_MTCLIENT_=${zookeeper.installfolder_}/bin/cli_mt
-
-[ ! -e "$SHUNIT2_" ] && exit 1
 
 yum list installed ${project.artifactId} -q &>/dev/null 
 [ -z $? ] && exit 1
@@ -38,10 +35,11 @@ shift $((OPTIND-1))
 
 [ -z "$url_" ] && url_="$host_:$port_"
 
+#@Test
 testZookeeper() {
 
-	assertTrue 'Zookeeper is not installed' "[ -e $ZK_CLIENT_ ]"
-	assertTrue 'Zookeeper (multithreaded client) is not installed' "[ -e $ZK_MTCLIENT_ ]"
+	assertTrue 'Zookeeper is not installed' `[ -e $ZK_CLIENT_ ]; echo $?`
+	assertTrue 'Zookeeper (multithreaded client) is not installed' `[ -e $ZK_MTCLIENT_ ]; echo $?`
 
 	echo 'ls /' | $ZK_CLIENT_ "$url_"  2>&1 | grep Socket -q
 	assertEquals "Zookeeper is not answering ($url_)" 1 $?
@@ -51,4 +49,5 @@ testZookeeper() {
 
 }
 
-. $SHUNIT2_
+export PS_EXIT_ON_FAIL=1 
+. ${meteorit.libs_}/provashell

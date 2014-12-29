@@ -40,7 +40,7 @@ zookeeper_="${zookeeper.installfolder_}/bin/zkServer.sh start-foreground"
 
 
 # load multiplatform init environment
-. ${install.prefix_}/share/meteorit/meteorit-init-functions
+. ${meteorit.libs_}/meteorit-init-functions
 load_init_env
 establish_lockfile_prefix_path
 

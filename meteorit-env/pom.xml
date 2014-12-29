@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.calidos.dani.meteorit</groupId>
 	<artifactId>meteorit-env</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<packaging>rpm</packaging>
 
 	<name>Meteorit system shell utils and environment</name>
@@ -14,18 +14,39 @@
     <parent>
     	<groupId>com.calidos.dani.meteorit</groupId>
 		<artifactId>meteorit-compile-parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.1.0-SNAPSHOT</version>
 		<relativePath>../meteorit-compile-parent/pom.xml</relativePath>
     </parent>
     
     <properties>
-	    <env.installfolder_>${install.prefix_}/share/meteorit</env.installfolder_>
+	    <env.installfolder_>${install.prefix_}/meteorit</env.installfolder_>
 	    <binary.architecture_>noarch</binary.architecture_>
+	    <provashell.version_>2.0.3</provashell.version_>
+	    <provashell.url_>https://raw.githubusercontent.com/danigiri/provashell/provashell-${provashell.version_}/src/main/sh/provashell</provashell.url_>
     </properties>
     
     <build>
    		<plugins>
-   		 <plugin>	<!-- package as rpm, yay -->
+   		
+            <plugin>	<!-- Download and expand whatever is needed -->
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>	<!-- target/classes is not created early on -->
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <get src="${provashell.url_}"
+                                	 dest="${project.build.outputDirectory}/provashell" skipexisting="true" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+			</plugin>
+			<plugin>	<!-- package as rpm, yay -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>rpm-maven-plugin</artifactId>
                 <version>2.1-alpha-2</version>
@@ -60,16 +81,44 @@
                     </requires>
                     	
                     <mappings>
-                                     
-						<mapping>	
+						<mapping>	<!-- main folder -->
+							<directory>${env.installfolder_}</directory>
+						</mapping>                                      
+						<mapping>	<!-- scripts -->
 							<sources>
 								<source>
-									<location>${project.build.outputDirectory}</location>
+									<location>${project.build.outputDirectory}/</location>
+									<includes>
+										<include>*.sh</include>
+									</includes>
+								</source>
+							</sources>
+							<filemode>755</filemode>
+							<directory>${env.installfolder_}/bin</directory>
+							<directoryIncluded>true</directoryIncluded>
+						</mapping>
+						<mapping>	<!-- libs (meteorit common stuff and testing lib -->
+							<sources>
+								<source>
+									<location>${project.build.outputDirectory}/</location>
+									<excludes>
+										<exclude>*.sh</exclude>
+										<exclude>LICENSE</exclude>
+									</excludes>
+								</source>
+							</sources>
+							<directory>${env.installfolder_}/lib</directory>
+							<directoryIncluded>true</directoryIncluded>
+						</mapping>        
+						<mapping>	<!-- LICENSE :) -->
+							<sources>
+								<source>
+									<location>${project.build.outputDirectory}/LICENSE</location>
 								</source>
 							</sources>
 							<directory>${env.installfolder_}</directory>
 							<directoryIncluded>true</directoryIncluded>
-						</mapping>        
+						</mapping>						
                     </mappings>
 
 			    </configuration>

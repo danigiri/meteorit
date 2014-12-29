@@ -23,7 +23,6 @@ if [ -e cli_mt ]; then
 fi
 
 echo 'Starting zookeeper clients build...'
-
 echo 'Configuring (1/2):'
 autoreconf -if | pv -f -l -p -s 5 > ./autoreconf.output
 ERR_=$?

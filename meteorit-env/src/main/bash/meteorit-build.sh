@@ -48,8 +48,8 @@ else
 
 	# Compilation standard packages
 	yum install -q -y gcc gcc-c++ make pcre-devel zlib-devel autoconf automake libtool cppunit-devel
-	# RPM build system and, shell unit testing and 'pv' to prettyfy outputs
-	yum install -q -y rpm-build man shunit2 pv
+	# RPM build system and and 'pv' to prettify outputs
+	yum install -q -y rpm-build man pv
 
 	# Needed for Maven
 	yum install -q -y java-1.6.0-openjdk

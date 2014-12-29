@@ -1,8 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014 Daniel Giribet <dani - calidos.cat>
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.calidos.dani.meteorit</groupId>
 	<artifactId>meteorit-backend-zookeeper</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<packaging>rpm</packaging>
 
 	<name>Meteorit system backend zookeeper component</name>
@@ -14,17 +30,17 @@
     <parent>
     	<groupId>com.calidos.dani.meteorit</groupId>
 		<artifactId>meteorit-compile-parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.1.0-SNAPSHOT</version>
 		<relativePath>../meteorit-compile-parent/pom.xml</relativePath>
     </parent>
     
     <properties>
-		<zookeeper.version_>3.4.5</zookeeper.version_>
+		<zookeeper.version_>3.4.6</zookeeper.version_>
 		<zookeeper.url_>http://ftp.cixug.es/apache/zookeeper/zookeeper-${zookeeper.version_}/zookeeper-${zookeeper.version_}.tar.gz</zookeeper.url_>
 		<zookeeper.sourcefolder_>${project.build.directory}/zookeeper-${zookeeper.version_}</zookeeper.sourcefolder_>
 		<zookeeper.installfolder_>${install.prefix_}/zookeeper</zookeeper.installfolder_>
 		<zookeeper.tempfolder_>${project.build.directory}/zookeeper-install</zookeeper.tempfolder_>
-		<zookeeper.datafolder_>/var/lib/zookeeper</zookeeper.datafolder_>
+		<zookeeper.datafolder_>/var/opt/zookeeper</zookeeper.datafolder_>
 		<zookeeper.logfolder_>/var/log/zookeeper</zookeeper.logfolder_>
 		<zookeeper.username_>zookeeper</zookeeper.username_>
 		<zookeeper.groupname_>zookeeper</zookeeper.groupname_>
@@ -69,9 +85,10 @@
 					<skipApplication>${skipPatch_}</skipApplication>
 				</configuration>
 				<executions>
-					<execution>
+					<!-- process-resources phase: otherwise patch file is not resource-copied -->
+					<!-- execution>
 						<id>patch-zookeeper-mt_adaptor</id>
-						<phase>process-resources</phase>	<!-- process-resources phase: otherwise patch file is not resource-copied -->
+						<phase>process-resources</phase>	
 						<goals>
 							<goal>apply</goal>
 						</goals>
@@ -80,7 +97,7 @@
 							<targetDirectory>${zookeeper.sourcefolder_}/src/c/src</targetDirectory>
 							<originalFile>${zookeeper.sourcefolder_}/src/c/src/mt_adaptor.c</originalFile>
 						</configuration>
-					</execution>
+					</execution-->
 					<execution>
 						<id>patch-zookeeper-config</id>
 						<phase>process-classes</phase>
@@ -124,8 +141,8 @@
 
                     <defaultDirmode>${zookeeper.folderpermissions.default_}</defaultDirmode>
                     <defaultFilemode>${zookeeper.filepermissions.default_}</defaultFilemode>
-                    <defaultUsername>${zookeeper.username_}</defaultUsername>
-                    <defaultGroupname>${zookeeper.groupname_}</defaultGroupname>
+                    <defaultUsername>root</defaultUsername>
+                    <defaultGroupname>root</defaultGroupname>
                                
                     <requires>
                     	<require>shunit2 &gt;= 2.1.6</require>      
@@ -134,9 +151,11 @@
                     </requires>
                     	
                     <mappings>
-                                        	
-						<!-- 'zookeeper' mappings: shell scripts and binaries -->
-						<mapping>
+                                
+       					<mapping>		<!-- main folder -->
+							<directory>${zookeeper.installfolder_}</directory>
+						</mapping>	
+						<mapping>	<!-- 'zookeeper' mappings: shell scripts and binaries -->
 							<sources>
 								<source>
 									<location>${zookeeper.sourcefolder_}/bin</location>
@@ -150,8 +169,6 @@
 							</sources>
 							<directory>${zookeeper.installfolder_}/bin</directory>
 							<directoryIncluded>true</directoryIncluded>
-							<username>${zookeeper.username_}</username>
-							<groupname>${zookeeper.groupname_}</groupname>
 							<filemode>755</filemode>
 						</mapping>
 						<mapping>	<!-- includes -->
@@ -194,8 +211,6 @@
                     				<location>libzookeeper_st.so.2.0.0</location>
                     			</softlinkSource>
                     		</sources>
- 	                        <username>${lua.username_}</username>
-                            <groupname>${lua.groupname_}</groupname>  
                             <filemode>755</filemode>
                        		<directory>${zookeeper.installfolder_}/lib</directory>
                        		<directoryIncluded>false</directoryIncluded>
@@ -219,6 +234,8 @@
 						</mapping>
 						<mapping>	<!-- configuration -->
 							<directory>${zookeeper.installfolder_}/conf</directory>
+							<username>root</username>
+							<groupname>${zookeeper.groupname_}</groupname>
 							<filemode>${zookeeper.execpermissions.writable_}</filemode>							
 						</mapping>
 						<mapping>
@@ -228,7 +245,9 @@
 								</source>
 							</sources>
 							<directory>${zookeeper.installfolder_}/conf</directory>
-							<filemode>${zookeeper.filepermissions.writable_}</filemode>							
+							<filemode>${zookeeper.filepermissions.writable_}</filemode>
+							<username>${zookeeper.username_}</username>
+							<groupname>${zookeeper.groupname_}</groupname>						
 							<directoryIncluded>false</directoryIncluded>
 						</mapping>
 						<mapping>	<!-- data folder -->
@@ -261,8 +280,6 @@
                     				<location>${project.build.outputDirectory}/${project.artifactId}-installtest.sh</location>
                     			</source>
                     		</sources>
-   	                        <username>${zookeeper.username_}</username>
-                            <groupname>${zookeeper.groupname_}</groupname>  
                             <filemode>755</filemode>                  		
 							<directory>${zookeeper.installfolder_}/test</directory>
 							<directoryIncluded>true</directoryIncluded>
@@ -302,11 +319,6 @@
 			<name>The Apache Software License, Version 2.0</name>
 			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
 			<comments>ZooKeeper credits (http://zookeeper.apache.org/credits.html)</comments>
-		</license>
-		<license>
-			<name>LGPL (GNU Lesser General Public License)</name>
-			<url>http://www.gnu.org/licenses/lgpl.html</url>
-			<comments># Copyright (C) 2008 Kate Ward. All Rights Reserved (shUnit2)</comments>
 		</license>
 	</licenses>	
 		    
