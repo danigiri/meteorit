@@ -231,13 +231,13 @@
 							</sources>
 							<directory>${zookeeper.installfolder_}</directory>
 						</mapping>
-						<mapping>	<!-- configuration -->
+						<mapping>	<!-- configuration folder -->
 							<directory>${zookeeper.installfolder_}/conf</directory>
 							<username>root</username>
 							<groupname>${zookeeper.groupname_}</groupname>
 							<filemode>${zookeeper.execpermissions.writable_}</filemode>							
 						</mapping>
-						<mapping>
+						<mapping>	<!-- configuration files -->
 							<sources>
 								<source>
 									<location>${project.build.outputDirectory}/conf/</location>
@@ -248,6 +248,7 @@
 							<username>${zookeeper.username_}</username>
 							<groupname>${zookeeper.groupname_}</groupname>						
 							<directoryIncluded>false</directoryIncluded>
+							<configuration>noreplace</configuration>
 						</mapping>
 						<mapping>	<!-- data folder -->
 							<directory>${zookeeper.datafolder_}</directory>

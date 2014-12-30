@@ -1,0 +1,10 @@
+/var/log/mon/*.log {
+
+	size 10k
+	copytruncate
+    compress
+    rotate 5
+	maxage 100
+	missingok
+	
+}
