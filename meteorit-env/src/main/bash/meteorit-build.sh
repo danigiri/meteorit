@@ -40,7 +40,11 @@ if [ $? -eq 0 ]; then
 	# so alien does not need to run as root to generate files with root permissions on them
 	# mvn package -Dbinary.architecture_=armhf
 	# fakeroot alien -k *.rpm
-	# fakeroot fpm -s rpm -t deb --verbose --rpm-use-file-permissions -f `find . -name \*.rpm`                              
+	#
+	# Dependencies need to be specified straightaway
+	# fakeroot fpm -s rpm -t deb --verbose --no-auto-depends --rpm-use-file-permissions -f `find . -name \*.rpm`                              
+	#  dpkg --contents *.deb
+ 	#  sudo dpkg -i --debug=2 *.deb
 
 else 
 	# As a general download tool

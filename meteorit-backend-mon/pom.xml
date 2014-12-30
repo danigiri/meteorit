@@ -96,9 +96,7 @@
                     <defaultGroupname>root</defaultGroupname>
                                
                     <requires>
-                    	<require>shunit2 &gt;= 2.1.6</require>      
                     	<require>meteorit-env</require>
-                    	<require>meteorit-backend-mon</require>
                     </requires>
                     	
                     <mappings>

@@ -50,7 +50,7 @@ source ${zookeeper.installfolder_}/bin/zkEnv.sh
 
 start() {
  	message_ "Starting $desc_ (zookeeper): "
-	$mon_ -l "$mon_log_" -s 5  -p "$pidfile_" -m "$monpid_" -d "su - '${zookeeper.username_}' -m --session-command='sh $zookeeper_'"
+	$mon_ -l "$mon_log_" -s 5  -p "$pidfile_" -m "$monpid_" -d "su - '${zookeeper.username_}' -m --command='sh $zookeeper_'"
   	retval_=$?
   	[ $retval_ -eq 0 ] && success_
   	[ $retval_ -ne 0 ] && failure_

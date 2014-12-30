@@ -76,10 +76,6 @@
                     <defaultUsername>root</defaultUsername>
                     <defaultGroupname>root</defaultGroupname>
                                
-                    <requires>
-                    	<require>shunit2 &gt;= 2.1.6</require>      
-                    </requires>
-                    	
                     <mappings>
 						<mapping>	<!-- main folder -->
 							<directory>${env.installfolder_}</directory>
